@@ -80,7 +80,7 @@ class CityController extends Controller
         }
 
         $states = $this->getStates();
-        return view('system.city.edit', ['city' => $city, 'states' => $states]);
+        return view('system.city.edit', ['city' => (object) $city, 'states' => $states]);
     }
 
     /**

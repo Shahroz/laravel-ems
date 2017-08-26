@@ -25,7 +25,7 @@ Route::group(
 	'middleware' => 'auth'], function ($router) {
 	    $router->post('/search', 'UserManagementController@search')
 			->name('search');
-		$router->resource('/', 'UserManagementController');	
+		$router->resource('/', 'UserManagementController');
 });
 
 Route::group(

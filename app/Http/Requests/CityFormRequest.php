@@ -7,6 +7,9 @@ use App\City;
 
 class CityFormRequest extends FormRequest
 {
+    private $methods = [
+        'POST', 'PUT', 'PATCH', 'DELETE'
+    ];
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -29,16 +32,22 @@ class CityFormRequest extends FormRequest
             'state_id' => 'required|integer|exists:state,id',
         ];
 
-        if($this->isMethod('put')) {
-            $rules['id']   = 'required|integer|exists:city';
-            $city          = (new City)->getCityInfo($this->get('id', 0));
-            if (!empty($city)) {
-                $rules['name'] .= ',' . $city['id'];   
+        if(in_array($this->method(), $this->methods)) {
+            $id = $this->route()->parameter('city');
+            if(!empty($id)) {
+                if(isset($this->name)) {
+                    $rules['name'] .= ',name,' . $id;
+                }
+            } else {
+                $rules['id']   = 'required|integer|exists:city';
             }
         } elseif ($this->isMethod('delete')) {
-            $rules = [
-                'id' => 'required|integer|exists:city'
-            ];
+            $id = $this->route()->parameter('city');
+            if(empty($id)) {
+                $rules = [
+                    'id' => 'required|integer|exists:city'
+                ];
+            }
         }
 
         return $rules;
