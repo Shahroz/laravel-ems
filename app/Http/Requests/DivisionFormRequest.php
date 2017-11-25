@@ -27,13 +27,9 @@ class DivisionFormRequest extends FormRequest
             'name' => 'required|max:60|unique:division'
         ];
 
-        if($this->isMethod('put')) {
+        if ($this->isMethod('put')) {
             $rules['id']    = 'required|integer|exists:division';
-            $rules['name'] .= ',' . $this->get('id', 0); 
-        } elseif ($this->isMethod('delete')) {
-            $rules = [
-                'id' => 'required|integer|exists:division'
-            ];
+            $rules['name'] .= ',' . $this->get('id', null); 
         }
 
         return $rules;

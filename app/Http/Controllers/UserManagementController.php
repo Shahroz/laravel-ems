@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UserFormRequest;
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\User;
+use App\Http\Requests\UserFormRequest;
 
 class UserManagementController extends Controller
 {
@@ -14,7 +14,6 @@ class UserManagementController extends Controller
      * @var string
      */
     protected $redirectTo = '/user-management';
-
     
     /**
      * Display a listing of the resource.
@@ -25,7 +24,9 @@ class UserManagementController extends Controller
     {
         $users = (new User)->getUserList(5);
 
-        return view('users.index', ['users' => $users]);
+        return view('users.index', [
+            'users' => $users
+        ]);
     }
 
     /**
@@ -46,7 +47,8 @@ class UserManagementController extends Controller
      */
     public function store(UserFormRequest $request)
     {
-        $id = (new User)->addUser($request->input()); 
+        $input  = $request->except(['_token', '_method']);
+        $status = (new User)->addUser($input); 
         return redirect()->intended('/user-management');
     }
 
@@ -56,15 +58,11 @@ class UserManagementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $id)
     {
-        $user = (new User)->getUserInfo($id);
-        // Redirect to user list if updating user wasn't existed
-        if (empty($user)) {
-            return redirect()->intended('/user-management');
-        }
-
-        return view('users.edit', ['user' => (object)$user]);
+        return view('users.edit', [
+            'user' => (object) $user
+        ]);
     }
 
     /**
@@ -73,15 +71,11 @@ class UserManagementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(User $user)
     {
-        $user = (new User)->getUserInfo($id);
-        // Redirect to user list if updating user wasn't existed
-        if (empty($user)) {
-            return redirect()->intended('/user-management');
-        }
-
-        return view('users.edit', ['user' => (object)$user]);
+        return view('users.edit', [
+            'user' => (object) $user->toArray()
+        ]);
     }
 
     /**
@@ -91,9 +85,10 @@ class UserManagementController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UserFormRequest $request, $id)
+    public function update(UserFormRequest $request, User $user)
     {
-        $result = (new User)->updateUser($id, $request->input());
+        $input  = $request->except(['_token', '_method']);
+        $status = (new User)->updateUser($id, $input);
         return redirect()->intended('/user-management');
     }
 
@@ -104,7 +99,7 @@ class UserManagementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(UserFormRequest $request, $id)
+    public function destroy(UserFormRequest $request, User $user)
     {
         $result = (new User)->deleteUser($id);
         return redirect()->intended('/user-management');

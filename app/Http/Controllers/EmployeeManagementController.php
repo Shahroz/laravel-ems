@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\EmployeeFormRequest;
+use Response;
+use App\Models\City;
+use App\Models\State;
+use App\Models\Country;
+use App\Models\Employee;
+use App\Models\Division;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Response;
-use App\Employee;
-use App\City;
-use App\State;
-use App\Country;
-use App\Department;
-use App\Division;
+use App\Http\Requests\EmployeeFormRequest;
 
 class EmployeeManagementController extends Controller
 {
@@ -33,7 +33,9 @@ class EmployeeManagementController extends Controller
     public function index()
     {
         $employees = (new Employee)->getEmployees();
-        return view('employees.index', ['employees' => $employees]);
+        return view('employees.index', [
+            'employees' => $employees
+        ]);
     }
 
     /**
@@ -43,18 +45,8 @@ class EmployeeManagementController extends Controller
      */
     public function create()
     {
-        $cities      = (new City)->getAllCities();
-        $states      = (new State)->getAllStates();
-        $countries   = (new Country)->getAllCountries();
-        $departments = (new Department)->getAllDepartments();
-        $divisions   = (new Division)->getAllDivisions();
-        return view('employees.create', [
-            'cities'      => $cities, 
-            'states'      => $states, 
-            'countries'   => $countries,
-            'departments' => $departments, 
-            'divisions'   => $divisions
-        ]);
+        $data = $this->getFormData();
+        return view('employees.create', $data);
     }
 
     /**
@@ -67,10 +59,10 @@ class EmployeeManagementController extends Controller
     {
         // Upload image
         $path            = $request->file('avatar')->store('avatars');
-        $input           = $request->input();
+        $input           = $request->except(['_method', '_token']);
         $input['avatar'] = $path;
 
-        $id = (new Employee)->addEmployee((object)$input);
+        $id = (new Employee)->addEmployee($input);
         return redirect()->intended('/employee-management');
     }
 
@@ -80,7 +72,7 @@ class EmployeeManagementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Employee $id)
     {
         //
     }
@@ -91,7 +83,7 @@ class EmployeeManagementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Employee $id)
     {
         $employee = (new Employee)->getEmployeeInfo($id);
         // Redirect to state list if updating state wasn't existed
@@ -99,19 +91,9 @@ class EmployeeManagementController extends Controller
             return redirect()->intended('/employee-management');
         }
 
-        $cities      = (new City)->getAllCities();
-        $states      = (new State)->getAllStates();
-        $countries   = (new Country)->getAllCountries();
-        $departments = (new Department)->getAllDepartments();
-        $divisions   = (new Division)->getAllDivisions();
-        return view('employees.edit', [
-            'employee'    => $employee, 
-            'cities'      => $cities,
-            'states'      => $states, 
-            'countries'   => $countries,
-            'departments' => $departments, 
-            'divisions'   => $divisions
-        ]);
+        $data             = $this->getFormData();
+        $data['employee'] = $employee; 
+        return view('employees.edit', $data);
     }
 
     /**
@@ -121,15 +103,15 @@ class EmployeeManagementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(EmployeeFormRequest $request, $id)
+    public function update(EmployeeFormRequest $request, Employee $id)
     {
-        $input = $request->input();
+        $input = $request->except(['_method', '_token']);
         if ($request->file('avatar')) {
             $path = $request->file('avatar')->store('avatars');
             $input['avatar'] = $path;
         }
 
-        $status = (new Employee)->updateEmployee($id, (object)$input);
+        $status = (new Employee)->updateEmployee($id, $input);
         return redirect()->intended('/employee-management');
     }
 
@@ -140,7 +122,7 @@ class EmployeeManagementController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(EmployeeFormRequest $request, $id)
+    public function destroy(EmployeeFormRequest $request, Employee $id)
     {
         $status = (new Employee)->deleteEmployee($id);
         return redirect()->intended('/employee-management');
@@ -152,7 +134,8 @@ class EmployeeManagementController extends Controller
      * @param  \Illuminate\Http\Request  $request
      *  @return \Illuminate\Http\Response
      */
-    public function search(Request $request) {
+    public function search(Request $request)
+    {
         $constraints = [
             'firstname'       => $request->get('firstname'),
             'department.name' => $request->get('department_name')
@@ -172,10 +155,28 @@ class EmployeeManagementController extends Controller
      * @param  string  $name
      * @return \Illuminate\Http\Response
      */
-    public function load($name) {
-        $path = storage_path().'/app/avatars/'.$name;
-        if (file_exists($path)) {
-            return Response::download($path);
+    public function load($name)
+    {
+        if (!empty($name)) {
+            $path = storage_path().'/app/avatars/'.$name;
+            if (file_exists($path)) {
+                return response()->download($path);
+            }
         }
+
+        return $name;
+    }
+
+    private function getFormData()
+    {
+        $data = [
+            'cities'      => (new City)->getAllCities(),
+            'states'      => (new State)->getAllStates(),
+            'countries'   => (new Country)->getAllCountries(),
+            'departments' => (new Department)->getAllDepartments(),
+            'divisions'   => (new Division)->getAllDivisions()
+        ];
+
+        return $data;
     }
 }

@@ -1,40 +1,39 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-
 Route::get('/', function () {
     return view('dashboard');
 })->middleware('auth');
 
 Auth::routes();
-
-Route::get('/dashboard', 'DashboardController@index');
-Route::get('/profile', 'ProfileController@index');
-
-Route::group(
-	['prefix' => 'user-management', 'as' => 'users.',
-	'middleware' => 'auth'], function ($router) {
+Route::get('/profile', 'ProfileController@index')
+	->middleware('auth');
+Route::group([
+		'prefix' => 'user-management', 
+		'as' => 'user.',
+		'middleware' => 'auth'
+	], function ($router) {
 	    $router->post('/search', 'UserManagementController@search')
 			->name('search');
-		$router->resource('/', 'UserManagementController');
 });
+Route::resource('/user-management', 'UserManagementController', [
+	'names' 	 => 'user', 
+	'parameters' => [
+		'user-management' => 'user'
+	]
+]);
 
 Route::group(
 	['prefix' => 'employee-management', 'as' => 'employee.',
     'middleware' => 'auth'], function ($router) {
     	$router->post('/search', 'EmployeeManagementController@search')
 			->name('search');
-    	$router->resource('/', 'EmployeeManagementController');
 });
+Route::resource('/employee-management', 'EmployeeManagementController', [
+	'names' 	 => 'employee', 
+	'parameters' => [
+		'employee-management' => 'employee'
+	]
+]);
 
 Route::group(
     ['prefix' => 'system-management', 'as' => 'system.',

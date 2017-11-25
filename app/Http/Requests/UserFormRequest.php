@@ -31,23 +31,23 @@ class UserFormRequest extends FormRequest
             'last_name'  => 'required|max:60'
         ];
 
-        if($this->isMethod('put')) {
-            $rules['id']       = 'required|integer|exists:users';
-            $user              = (new User)->getUserInfo($this->get('id', 0), ['id']);
-            if (empty($user)) return $rules;
+        switch ($this->method()) {
+            case 'PUT':
+            case 'PATCH':
+                $rules['id']       = 'required|integer|exists:users';
+                $user              = (new User)->getUserInfo($this->get('id', 0), ['id']);
+                if (empty($user)) {
+                    return $rules;
+                }
 
-            $userId            = $user['id'];
-            $rules['email']    = 'required|integer|unique:users,' . $userId;
-            $rules['username'] = 'required|integer|exists:users,' . $userId;
+                $userId            = $user['id'];
+                $rules['email']    = 'required|integer|unique:users,' . $userId;
+                $rules['username'] = 'required|integer|exists:users,' . $userId;
 
-            if(!$this->has('password') || strlen($this->password) == 0) {
-                unset($rules['password']);
-                unset($rules['password_confirmation']);
-            }
-        } elseif ($this->isMethod('delete')) {
-            $rules = [
-                'id' => 'required|integer|exists:users'
-            ];
+                if (!$this->has('password')) {
+                    unset($rules['password']);
+                    unset($rules['password_confirmation']);
+                }
         }
 
         return $rules;

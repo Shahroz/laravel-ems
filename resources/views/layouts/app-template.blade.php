@@ -56,12 +56,13 @@
     -->
   <body class="hold-transition skin-blue sidebar-mini">
     <div class="wrapper">
-    <!-- Main Header -->
-    @include('layouts.header')
-    <!-- Sidebar -->
-    @include('layouts.sidebar')
-    @yield('content')
-    <!-- /.content-wrapper -->
+      <!-- Main Header -->
+      @include('layouts.header')
+      <!-- Sidebar -->
+      @include('layouts.sidebar')
+      @yield('content')
+    </div>
+      <!-- /.content-wrapper -->
     <!-- Footer -->
     @include('layouts.footer')
     <!-- ./wrapper -->

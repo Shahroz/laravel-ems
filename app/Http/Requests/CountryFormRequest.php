@@ -28,14 +28,9 @@ class CountryFormRequest extends FormRequest
             'country_code' => 'required|max:3|unique:country'
         ];
 
-        if($this->isMethod('put')) {
-            $rules['id']            = 'required|integer|exists:country';
-            $rules['name']         .= ',' . $this->get('id', 0); 
-            $rules['country_code'] .= ',' . $this->get('id', 0); 
-        } elseif ($this->isMethod('delete')) {
-            $rules = [
-                'id' => 'required|integer|exists:country'
-            ];
+        if ($this->isMethod('put')) {
+            $rules['name']         .= ',' . $this->get('id', null); 
+            $rules['country_code'] .= ',' . $this->get('id', null); 
         }
 
         return $rules;

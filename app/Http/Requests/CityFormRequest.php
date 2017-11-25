@@ -32,22 +32,17 @@ class CityFormRequest extends FormRequest
             'state_id' => 'required|integer|exists:state,id',
         ];
 
-        if(in_array($this->method(), $this->methods)) {
-            $id = $this->route()->parameter('city');
-            if(!empty($id)) {
-                if(isset($this->name)) {
-                    $rules['name'] .= ',name,' . $id;
+        switch ($this->method()) {
+            case 'PUT':
+            case 'PATCH':
+                $id = $this->route()->parameter('city');
+                if (!empty($id)) {
+                    if (isset($this->name)) {
+                        $rules['name'] .= ',name,' . $id;
+                    }
                 }
-            } else {
-                $rules['id']   = 'required|integer|exists:city';
-            }
-        } elseif ($this->isMethod('delete')) {
-            $id = $this->route()->parameter('city');
-            if(empty($id)) {
-                $rules = [
-                    'id' => 'required|integer|exists:city'
-                ];
-            }
+           
+                break;
         }
 
         return $rules;

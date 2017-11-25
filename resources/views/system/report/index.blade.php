@@ -18,7 +18,7 @@
                 </button>
             </form>
         </div>
-        <div class="col-sm-2">
+        <div class="col-xs-2">
             <form class="form-horizontal" role="form" method="POST" action="{{ route('system.report.pdf') }}">
                 {{ csrf_field() }}
                 <input type="hidden" value="{{$searchingVals['from']}}" name="from" />
@@ -39,10 +39,22 @@
       <form method="POST" action="{{ route('system.report.search') }}">
          {{ csrf_field() }}
          @component('layouts.search', ['title' => 'Search'])
-          @component('layouts.two-cols-date-search-row', ['items' => ['From', 'To'], 
-          'oldVals' => [isset($searchingVals) ? $searchingVals['from'] : '', isset($searchingVals) ? $searchingVals['to'] : '']])
-          @endcomponent
+          @component('layouts.two-cols-date-search-row', [
+          'fields' => [
+            'from' => [
+              'label' => 'From',
+              'value' => isset($searchingVals) && isset($searchingVals['from']) ? 
+                $searchingVals['from'] : ''
+            ],
+            'to' => [
+              'label' => 'To',
+              'value' => isset($searchingVals) && isset($searchingVals['to']) ? 
+                $searchingVals['to'] : ''
+            ]          
+          ]
+        ])
          @endcomponent
+        @endcomponent
       </form>
     <div class="dataTables_wrapper form-inline dt-bootstrap">
       <div class="row">

@@ -24,9 +24,21 @@
       <form method="POST" action="{{ route('employee.search') }}">
        {{ csrf_field() }}
        @component('layouts.search', ['title' => 'Search'])
-       @component('layouts.two-cols-search-row', ['items' => ['First Name', 'Department Name'], 
-       'oldVals' => [isset($searchingVals) ? $searchingVals['firstname'] : '', isset($searchingVals) ? $searchingVals['department_name'] : '']])
-       @endcomponent
+       @component('layouts.two-cols-search-row', [
+        'fields' => [
+            'firstname' => [
+              'label' => 'First Name',
+              'value' => isset($searchingVals) && isset($searchingVals['firstname']) ? 
+                $searchingVals['firstname'] : ''
+            ],
+            'department_name' => [
+              'label' => 'Department Name',
+              'value' => isset($searchingVals) && isset($searchingVals['department_name']) ? 
+                $searchingVals['department_name'] : ''
+            ]            
+          ]
+        ])
+        @endcomponent
        @endcomponent
      </form>
      <div class="dataTables_wrapper form-inline dt-bootstrap">

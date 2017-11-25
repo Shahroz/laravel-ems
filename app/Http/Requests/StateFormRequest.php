@@ -28,13 +28,9 @@ class StateFormRequest extends FormRequest
             'country_id' => 'required|integer|exists:country,id'
         ];
 
-        if($this->isMethod('put')) {
-            $rules['id']            = 'required|integer|exists:state';
-            $rules['name']         .= ',' . $this->get('id', 0);
-        } elseif ($this->isMethod('delete')) {
-            $rules = [
-                'id' => 'required|integer|exists:state'
-            ];
+        if ($this->isMethod('put')) {
+            $rules['id']   = 'required|integer|exists:state';
+            $rules['name'] .= ',' . $this->get('id', null);
         }
 
         return $rules;

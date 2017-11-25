@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\DivisionFormRequest;
+use App\Models\Division;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Division;
+use App\Http\Requests\DivisionFormRequest;
 
 class DivisionController extends Controller
 {
+    private $division;
     /**
      * Create a new controller instance.
      *
@@ -17,6 +18,7 @@ class DivisionController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->division = new Division;
     }
 
     /**
@@ -26,8 +28,11 @@ class DivisionController extends Controller
      */
     public function index()
     {
-        $divisions = (new Division)->getDivisions();
-        return view('system.division.index', ['divisions' => $divisions]);
+        $divisions = $this->division
+            ->getDivisions();
+        return view('system.division.index', [
+            'divisions' => $divisions
+        ]);
     }
 
     /**
@@ -48,7 +53,8 @@ class DivisionController extends Controller
      */
     public function store(DivisionFormRequest $request)
     {
-        $id = (new Division)->addDivision((object)$request->input());
+        $input  = $request->except(['_method', '_token']);
+        $this->division->addDivision($input);
         return redirect()->intended('system-management/division');
     }
 
@@ -58,7 +64,7 @@ class DivisionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Division $id)
     {
         //
     }
@@ -69,15 +75,18 @@ class DivisionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Division $id)
     {
-        $division = (new Division)->getDivisionInfo($id);
+        $divisionInfo = $this->division
+            ->getDivisionInfo($id);
         // Redirect to division list if updating division wasn't existed
-        if (empty($division)) {
+        if (empty($divisionInfo)) {
             return redirect()->intended('/system-management/division');
         }
 
-        return view('system.division.edit', ['division' => $division]);
+        return view('system.division.edit', [
+            'division' => $divisionInfo
+        ]);
     }
 
     /**
@@ -87,9 +96,10 @@ class DivisionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(DivisionFormRequest $request, $id)
+    public function update(DivisionFormRequest $request, Division $id)
     {
-        $status = (new Division)->updateDivision($id, (object)$request->input());
+        $input  = $request->except(['_method', '_token']);
+        $this->division->updateDivision($id, $input);
         return redirect()->intended('system-management/division');
     }
 
@@ -99,9 +109,10 @@ class DivisionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(DivisionFormRequest $request, $id)
+    public function destroy(DivisionFormRequest $request, Division $id)
     {
-        $status = (new Division)->deleteDivision('id', $id);
+        $this->division
+            ->deleteDivision('id', $id);
         return redirect()->intended('system-management/division');
     }
 
@@ -111,14 +122,16 @@ class DivisionController extends Controller
      * @param  \App\Http\Requests\DivisionFormRequest  $request
      *  @return \Illuminate\Http\Response
      */
-    public function search(Request $request) {
+    public function search(Request $request)
+    {
         $constraints = [
             'name' => $request['name']
         ];
 
-       $divisions = (new Division)->getSearchingQuery($constraints);
+       $divisions = $this->division
+            ->getSearchingQuery($constraints);
        return view('system.division.index', [
-            'divisions'     => $divisions, 
+            'divisions'     => $divisions,
             'searchingVals' => $constraints
         ]);
     }

@@ -26,14 +26,8 @@ class DepartmentFormRequest extends FormRequest
         $rules = [
             'name' => 'required|max:60|unique:department'
         ];
-
-        if($this->isMethod('put')) {
-            $rules['id']    = 'required|integer|exists:department';
-            $rules['name'] .= ',' . $this->get('id', 0); 
-        } elseif ($this->isMethod('delete')) {
-            $rules = [
-                'id' => 'required|integer|exists:department'
-            ];
+        if ($this->isMethod('put')) {
+            $rules['name'] .= ',' . $this->get('id', null); 
         }
 
         return $rules;

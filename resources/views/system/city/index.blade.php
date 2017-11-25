@@ -22,12 +22,19 @@
         <div class="col-sm-6"></div>
       </div>
       <form method="POST" action="{{ route('system.city.search') }}">
-       {{ csrf_field() }}
-       @component('layouts.search', ['title' => 'Search'])
-       @component('layouts.two-cols-search-row', ['items' => ['Name'], 
-       'oldVals' => [isset($searchingVals) ? $searchingVals['name'] : '']])
-       @endcomponent
-       @endcomponent
+        {{ csrf_field() }}
+        @component('layouts.search', ['title' => 'Search'])
+        @component('layouts.two-cols-search-row', [
+          'fields' => [
+            'name' => [
+              'label' => 'Name',
+              'value' => isset($searchingVals) && isset($searchingVals['name']) ? 
+                $searchingVals['name'] : ''
+            ]          
+          ]
+        ])
+      @endcomponent
+      @endcomponent
      </form>
      <div class="dataTables_wrapper form-inline dt-bootstrap">
       <div class="row">

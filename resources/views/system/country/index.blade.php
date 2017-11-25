@@ -24,9 +24,21 @@
       <form method="POST" action="{{ route('system.country.search') }}">
        {{ csrf_field() }}
        @component('layouts.search', ['title' => 'Search'])
-       @component('layouts.two-cols-search-row', ['items' => ['Country Code', 'Name'], 
-       'oldVals' => [isset($searchingVals) ? $searchingVals['country_code'] : '', isset($searchingVals) ? $searchingVals['name'] : '']])
-       @endcomponent
+       @component('layouts.two-cols-search-row', [
+        'fields' => [
+          'name' => [
+              'label' => 'Name',
+              'value' => isset($searchingVals) && isset($searchingVals['name']) ? 
+                $searchingVals['name'] : ''
+            ],
+            'country_code' => [
+              'label' => 'Country Code',
+              'value' => isset($searchingVals) && isset($searchingVals['country_code']) ? 
+                $searchingVals['country_code'] : ''
+            ]          
+          ]
+        ])
+        @endcomponent
        @endcomponent
      </form>
      <div class="dataTables_wrapper form-inline dt-bootstrap">

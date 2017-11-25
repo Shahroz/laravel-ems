@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
+use App\Models\State;
 use Illuminate\Http\Request;
-use App\Http\Requests\CityFormRequest;
 use Illuminate\Support\Facades\DB;
-use App\City;
-use App\State;
+use App\Http\Requests\CityFormRequest;
 
 class CityController extends Controller
 {
+    private $city;
+    private $state;
     /**
      * Create a new controller instance.
      *
@@ -18,6 +20,8 @@ class CityController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->state = new State;
+        $this->city  = new City;
     }
 
     /**
@@ -27,8 +31,10 @@ class CityController extends Controller
      */
     public function index()
     {
-        $cities = (new City)->getCities();
-        return view('system.city.index', ['cities' => $cities]);
+        $cities = $this->city->getCities();
+        return view('system.city.index', [
+            'cities' => $cities
+        ]);
     }
 
     /**
@@ -39,7 +45,9 @@ class CityController extends Controller
     public function create()
     {
         $states = $this->getStates();
-        return view('system.city.create', ['states' => $states]);
+        return view('system.city.create', [
+            'states' => $states
+        ]);
     }
 
     /**
@@ -50,7 +58,16 @@ class CityController extends Controller
      */
     public function store(CityFormRequest $request)
     {
-        $id = (new City)->addCity((object)$request->input());
+        $input  = $request->except(['_method', '_token']);
+        $status = $this->city->addCity($input);
+        if (empty($status)) {
+            $states = $this->getStates();
+            return redirect()
+                ->back()
+                ->withErrors(['error', 'Unable to save records. Please try again!'])
+                ->with('states', $states);
+        }
+
         return redirect()->intended('system.city');
     }
 
@@ -60,7 +77,7 @@ class CityController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(City $id)
     {
         //
     }
@@ -71,16 +88,13 @@ class CityController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(City $id)
     {
-        $city = (new City)->getCityInfo($id);
-        // Redirect to city list if updating city wasn't existed
-        if (empty($city)) {
-            return redirect()->intended('/system-management/city');
-        }
-
         $states = $this->getStates();
-        return view('system.city.edit', ['city' => (object) $city, 'states' => $states]);
+        return view('system.city.edit', [
+            'city'   => (object) $city->toArray(),
+            'states' => $states
+        ]);
     }
 
     /**
@@ -90,9 +104,10 @@ class CityController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CityFormRequest $request, $id)
+    public function update(CityFormRequest $request, City $id)
     {
-        $city = (new City)->updateCity($id, (object)$request->input());
+        $input  = $request->except(['_method', '_token']);
+        $status = $this->city->updateCity($id, $input);
         return redirect()->intended('system-management/city');
     }
 
@@ -103,9 +118,9 @@ class CityController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(CityFormRequest $request, $id)
+    public function destroy(CityFormRequest $request, City $id)
     {
-        $id = (new City)->deleteCity($id);
+        $this->city->deleteCity($id);
         return redirect()->intended('system-management/city');
     }
 
@@ -120,12 +135,17 @@ class CityController extends Controller
             'name' => $request->name
         ];
 
-       $cities = (new City)->getSearchingQuery($constraints);
-       return view('system.city.index', ['cities' => $cities, 'searchingVals' => $constraints]);
+       $cities = $this->city
+            ->getSearchingQuery($constraints);
+       return view('system.city.index', [
+            'cities'        => $cities,
+            'searchingVals' => $constraints
+        ]);
     }
 
     private function getStates()
     {
-        return (new State)->getAllStates();
+        return $this->state
+            ->getAllStates();
     }
 }

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Country;
 use Illuminate\Http\Request;
-use App\Http\Requests\CountryFormRequest;
 use Illuminate\Support\Facades\DB;
-use App\Country;
+use App\Http\Requests\CountryFormRequest;
 
 class CountryController extends Controller
 {
+    private $country;
     /**
      * Create a new controller instance.
      *
@@ -17,6 +18,7 @@ class CountryController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->country = new Country;
     }
 
     /**
@@ -26,9 +28,11 @@ class CountryController extends Controller
      */
     public function index()
     {
-        $countries = (new Country)->getCountries();
-
-        return view('system.country.index', ['countries' => $countries]);
+        $countries = $this->country
+            ->getCountries();
+        return view('system.country.index', [
+            'countries' => $countries
+        ]);
     }
 
     /**
@@ -49,7 +53,9 @@ class CountryController extends Controller
      */
     public function store(CountryFormRequest $request)
     {
-        $id = (new Country)->addCountry((object)$request->input());
+        $input  = $request->except(['_method', '_token']);
+        $status = $this->country
+            ->addCountry($input);
         return redirect()->intended('system-management/country');
     }
 
@@ -59,15 +65,18 @@ class CountryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Country $id)
     {
-        $country = (new Country)->getCountryInfo($id);
+        $countryInfo = $this->country
+            ->getCountryInfo($id);
         // Redirect to country list if updating country wasn't existed
-        if (empty($country)) {
+        if (empty($countryInfo)) {
             return redirect()->intended('/system-management/country');
         }
 
-        return view('system.country.edit', ['country' => $country]);
+        return view('system.country.edit', [
+            'country' => $countryInfo
+        ]);
     }
 
     /**
@@ -76,15 +85,18 @@ class CountryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Country $id)
     {
-        $country = (new Country)->getCountryInfo($id);
+        $countryInfo = $this->country
+            ->getCountryInfo($id);
         // Redirect to country list if updating country wasn't existed
-        if (empty($country)) {
+        if (empty($countryInfo)) {
             return redirect()->intended('/system-management/country');
         }
 
-        return view('system.country.edit', ['country' => $country]);
+        return view('system.country.edit', [
+            'country' => $countryInfo
+        ]);
     }
 
     /**
@@ -94,9 +106,11 @@ class CountryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(CountryFormRequest $request, $id)
+    public function update(CountryFormRequest $request, Country $id)
     {
-        $status = (new Country)->updateCountry($id, $request->input());
+        $input  = $request->except(['_method', '_token']);
+        $status = $this->country
+            ->updateCountry($id, $input);
         return redirect()->intended('system-management/country');
     }
 
@@ -106,9 +120,10 @@ class CountryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(CountryFormRequest $request, $id)
+    public function destroy(CountryFormRequest $request, Country $id)
     {
-        $status = (new Country)->deleteCountry($id);
+        $this->country
+            ->deleteCountry($id);
         return redirect()->intended('system-management/country');
     }
 
@@ -118,15 +133,17 @@ class CountryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      *  @return \Illuminate\Http\Response
      */
-    public function search(Request $request) {
+    public function search(Request $request)
+    {
         $constraints = [
             'name'         => $request->get('name'),
             'country_code' => $request->get('country_code')
         ];
 
-       $countries = (new Country)->getSearchingQuery($constraints);
+       $countries = $this->country
+            ->getSearchingQuery($constraints);
        return view('system.country.index', [
-            'countries'     => $countries, 
+            'countries'     => $countries,
             'searchingVals' => $constraints
         ]);
     }

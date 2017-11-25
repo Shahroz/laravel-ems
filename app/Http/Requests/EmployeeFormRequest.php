@@ -40,12 +40,6 @@ class EmployeeFormRequest extends FormRequest
             'avatar'        => 'nullable|image|mimes:png,jpeg,jpg,bmp,gif'      
         ];
 
-        if($this->isMethod('put')) {
-            $rules['id']    = 'required|integer|exists:employees';
-        } elseif ($this->isMethod('delete')) {
-            $rules = [
-                'id' => 'required|integer|exists:employees'
-            ];
-        }
+        return $rules;
     }
 }

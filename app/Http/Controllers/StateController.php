@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StateFormRequest;
+use App\Models\State;
+use App\Models\Country;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\State;
-use App\Country;
+use App\Http\Requests\StateFormRequest;
 
 class StateController extends Controller
 {
@@ -28,7 +28,9 @@ class StateController extends Controller
     public function index()
     {
         $states = (new State)->getStateList();
-        return view('system.state.index', ['states' => $states]);
+        return view('system.state.index', [
+            'states' => $states
+        ]);
     }
 
     /**
@@ -39,7 +41,9 @@ class StateController extends Controller
     public function create()
     {
         $countries = $this->getCountries();
-        return view('system.state.create', ['countries' => $countries]);
+        return view('system.state.create', [
+            'countries' => $countries
+        ]);
     }
 
     /**
@@ -50,7 +54,8 @@ class StateController extends Controller
      */
     public function store(StateFormRequest $request)
     {
-        $id = (new State)->addState((object)$request->input());
+        $input  = $request->except(['_token', '_method']); 
+        $status = (new State)->addState($input);
         return redirect()->intended('system-management/state');
     }
 
@@ -60,7 +65,7 @@ class StateController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(State $id)
     {
         //
     }
@@ -71,7 +76,7 @@ class StateController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(State $id)
     {
         $state = (new State)->getStateInfo($id);
         // Redirect to state list if updating state wasn't existed
@@ -93,9 +98,10 @@ class StateController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(StateFormRequest $request, $id)
+    public function update(StateFormRequest $request, State $id)
     {
-        $status = (new State)->updateState($id, (object)$request->input());
+        $input  = $request->except(['_token', '_method']);
+        $status = (new State)->updateState($id, $input);
         return redirect()->intended('system-management/state');
     }
 
@@ -106,7 +112,7 @@ class StateController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(StateFormRequest $request, $id)
+    public function destroy(StateFormRequest $request, State $id)
     {
         $status = (new State)->deleteState($id);
         return redirect()->intended('system-management/state');

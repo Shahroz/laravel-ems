@@ -24,8 +24,15 @@
       <form method="POST" action="{{ route('system.division.search') }}">
        {{ csrf_field() }}
        @component('layouts.search', ['title' => 'Search'])
-       @component('layouts.two-cols-search-row', ['items' => ['Name'], 
-       'oldVals' => [isset($searchingVals) ? $searchingVals['name'] : '']])
+       @component('layouts.two-cols-search-row', [
+          'fields' => [
+            'name' => [
+              'label' => 'Name',
+              'value' => isset($searchingVals) && isset($searchingVals['name']) ? 
+                $searchingVals['name'] : ''
+            ]          
+          ]
+        ])
        @endcomponent
        @endcomponent
      </form>

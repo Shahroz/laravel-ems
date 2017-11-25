@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Employee;
 use Excel;
-use Illuminate\Support\Facades\DB;
 use Auth;
 use PDF;
+use App\Models\Employee;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ReportController extends Controller
 {
@@ -21,7 +21,8 @@ class ReportController extends Controller
         $this->middleware('auth');
     }
 
-    public function index() {
+    public function index()
+    {
         date_default_timezone_set('asia/karachi');
         $format      = 'Y/m/d';
         $now         = date($format);
@@ -38,12 +39,14 @@ class ReportController extends Controller
         ]);
     }
 
-    public function exportExcel(Request $request) {
+    public function exportExcel(Request $request)
+    {
         $this->prepareExportingData($request)->export('xlsx');
         redirect()->intended('system-management/report');
     }
 
-    public function exportPDF(Request $request) {
+    public function exportPDF(Request $request)
+    {
          $constraints = [
             'from' => $request['from'],
             'to'   => $request['to']
@@ -56,12 +59,12 @@ class ReportController extends Controller
         return $pdf->download('report_from_'. $request['from'].'_to_'.$request['to'].'pdf');
     }
     
-    private function prepareExportingData($request) {
+    private function prepareExportingData($request)
+    {
         $author    = Auth::user()->username;
         $employees = $this->getExportingData(['from'=> $request['from'], 'to' => $request['to']]);
         return Excel::create('report_from_'. $request['from'].'_to_'.$request['to'], 
             function($excel) use($employees, $request, $author) {
-
             // Set the title
             $excel->setTitle('List of hired employees from '. $request['from'].' to '. $request['to']);
 
@@ -71,24 +74,38 @@ class ReportController extends Controller
 
             // Call them separately
             $excel->setDescription('The list of hired employees');
-
             $excel->sheet('Hired_Employees', function($sheet) use($employees) {
                 $sheet->fromArray($employees);
             });
         });
     }
 
-    public function search(Request $request) {
+    /**
+     * Get list of filtered hired employees
+     * @param Request $request
+     * @return mixed
+     */
+    public function search(Request $request)
+    {
         $constraints = [
-            'from' => $request['from'],
-            'to'   => $request['to']
+            'from' => $request->get('from', null),
+            'to'   => $request->get('to', null)
         ];
 
         $employees = (new Employee)->getHiredEmployees($constraints);
-        return view('system.report.index', ['employees' => $employees, 'searchingVals' => $constraints]);
+        return view('system.report.index', [
+            'employees'     => $employees, 
+            'searchingVals' => $constraints
+        ]);
     }
 
-    private function getExportingData($constraints) {
+    /**
+     * Export data
+     * @param $constraints
+     * @return mixed
+     */
+    private function getExportingData($constraints)
+    {
         return (new Employee)->getExportingData($constraints);
     }
 }

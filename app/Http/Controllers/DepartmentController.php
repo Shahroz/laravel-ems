@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\DepartmentFormRequest;
+use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\department;
+use App\Http\Requests\DepartmentFormRequest;
 
 class DepartmentController extends Controller
 {
+    private $department;
     /**
      * Create a new controller instance.
      *
@@ -17,6 +18,7 @@ class DepartmentController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
+        $this->department = new Department;
     }
 
     /**
@@ -26,8 +28,11 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = (new Department)->getDepartments();
-        return view('system.department.index', ['departments' => $departments]);
+        $departments = $this->department
+            ->getDepartments();
+        return view('system.department.index', [
+            'departments' => $departments
+        ]);
     }
 
     /**
@@ -48,7 +53,8 @@ class DepartmentController extends Controller
      */
     public function store(DepartmentFormRequest $request)
     {
-        $department = (new Department)->addDepartment((object)$request->input());
+        $input      = $request->except(['_method', '_token']);
+        $department = $this->department->addDepartment($input);
         return redirect()->intended('system-management/department');
     }
 
@@ -58,7 +64,7 @@ class DepartmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Department $id)
     {
         //
     }
@@ -69,15 +75,18 @@ class DepartmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Department $id)
     {
-        $department = (new Department)->getDepartmentInfo($id);
+        $department = $this->department
+            ->getDepartmentInfo($id);
         // Redirect to department list if updating department wasn't existed
         if (empty($department)) {
             return redirect()->intended('/system-management/department');
         }
 
-        return view('system.department.edit', ['department' => $department]);
+        return view('system.department.edit', [
+            'department' => $department
+        ]);
     }
 
     /**
@@ -87,9 +96,11 @@ class DepartmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(DepartmentFormRequest $request, $id)
+    public function update(DepartmentFormRequest $request, Department $id)
     {
-        $status = (new Department)->updateDepartment($id, (object)$request->input());
+        $input  = $request->except(['_method', '_token']);
+        $status = $this->department
+            ->updateDepartment($id, $input);
         return redirect()->intended('system-management/department');
     }
 
@@ -99,9 +110,10 @@ class DepartmentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(DepartmentFormRequest $request, $id)
+    public function destroy(DepartmentFormRequest $request, Department $id)
     {
-        $status = (new Department)->deleteDepartment('id', $id);
+        $this->department
+            ->deleteDepartment('id', $id);
         return redirect()->intended('system-management/department');
     }
 
@@ -111,14 +123,16 @@ class DepartmentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      *  @return \Illuminate\Http\Response
      */
-    public function search(Request $request) {
+    public function search(Request $request)
+    {
         $constraints = [
             'name' => $request->get('name')
         ];
 
-       $departments = (new Department)->getSearchingQuery($constraints);
+       $departments = $this->department
+            ->getSearchingQuery($constraints);
        return view('system.department.index', [
-            'departments'   => $departments, 
+            'departments'   => $departments,
             'searchingVals' => $constraints
         ]);
     }
