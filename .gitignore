@@ -11,3 +11,5 @@ Homestead.yaml
 package-lock.json
 yarn.lock
 composer.lock
+*.rdb
+*.db
