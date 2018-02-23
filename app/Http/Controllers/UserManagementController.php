@@ -4,29 +4,41 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Services\UserService;
 use App\Http\Requests\UserFormRequest;
 
 class UserManagementController extends Controller
 {
+    /**
+     * Instance of UserService.
+     *
+     * @var UserService
+     */
+    protected $userService;
+
     /**
      * Where to redirect users after registration.
      *
      * @var string
      */
     protected $redirectTo = '/user-management';
-    
+
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = (new User)->getUserList(5);
+        $users = $this->userService->getAll($request);
 
-        return view('users.index', [
-            'users' => $users
-        ]);
+        return view('users.index', compact('users'));
     }
 
     /**
@@ -47,62 +59,72 @@ class UserManagementController extends Controller
      */
     public function store(UserFormRequest $request)
     {
-        $input  = $request->except(['_token', '_method']);
-        $status = (new User)->addUser($input); 
-        return redirect()->intended('/user-management');
+        $response = $this->userService->create($request);
+        if (!$response['status']) {
+            return redirect()
+                ->back()
+                ->with('response', $response);
+        }
+
+        return redirect()->route('user.index')
+            ->with('response', $response);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(User $id)
+    public function show(User $user)
     {
-        return view('users.edit', [
-            'user' => (object) $user
-        ]);
+        return view('users.edit', compact('user'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function edit(User $user)
     {
-        return view('users.edit', [
-            'user' => (object) $user->toArray()
-        ]);
+        return view('users.edit', compact('user'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param \App\Http\Requests\UserFormRequest $request
-     * @param  int $id
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function update(UserFormRequest $request, User $user)
     {
-        $input  = $request->except(['_token', '_method']);
-        $status = (new User)->updateUser($id, $input);
-        return redirect()->intended('/user-management');
+        $response = $this->userService->update($request, $user);
+        if (!$response['status']) {
+            return redirect()
+                ->back()
+                ->with('response', $response);
+        }
+
+        return redirect()->route('user.index')
+            ->with('response', $response);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Http\Requests\UserFormRequest  $request
-     * @param  int  $id
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
     public function destroy(UserFormRequest $request, User $user)
     {
-        $result = (new User)->deleteUser($id);
-        return redirect()->intended('/user-management');
+        $response = $this->userService->delete($user);
+
+        return redirect()->route('user.index')
+            ->with('response', $response);
     }
 
     /**
@@ -112,16 +134,11 @@ class UserManagementController extends Controller
      *  @return \Illuminate\Http\Response
      */
     public function search(Request $request) {
-        $constraints = [
-            'username'   => $request->get('username'),
-            'first_name' => $request->get('first_name'),
-            'last_name'  => $request->get('last_name')
-        ];
+       $users = $this->userService->getAll($request);
 
-       $users        = (new User)->getSearchingQuery($constraints);
        return view('users.index', [
             'users'         => $users, 
-            'searchingVals' => $constraints
+            'searchingVals' => $request->only(['username', 'first_name', 'last_name'])
         ]);
     }
 }
