@@ -39,29 +39,24 @@ Route::group(
     ['prefix' => 'system-management', 'as' => 'system.',
     'middleware' => 'auth'], function ($router) {
     	// Department routes
-    	$router->resource('department', 'DepartmentController');
-		$router->post('department/search', 'DepartmentController@search')
-			->name('department.search');
+    	$router->resource('departments', 'DepartmentController');
+		$router->post('departments/search', 'DepartmentController@search')
+			->name('departments.search');
 		
 		// Division routes	
-		$router->resource('/division', 'DivisionController');
-		$router->post('/division/search', 'DivisionController@search')
-			->name('division.search');
+		$router->resource('/divisions', 'DivisionController');
+		$router->post('/divisions/search', 'DivisionController@search')
+			->name('divisions.search');
 
 		// Country routes
-		$router->resource('/country', 'CountryController');
-		$router->post('/country/search', 'CountryController@search')
-			->name('country.search');
+		$router->resource('/countries', 'CountryController');
+		$router->post('/countries/search', 'CountryController@search')
+			->name('countries.search');
 
 		// State routes
-		$router->resource('/state', 'StateController');
-		$router->post('/state/search', 'StateController@search')
-			->name('state.search');
-
-		// City routes
-		$router->resource('/city', 'CityController');
-		$router->post('/city/search', 'CityController@search')
-			->name('city.search');
+		$router->resource('/states', 'StateController');
+		$router->post('/states/search', 'StateController@search')
+			->name('states.search');
 
 		// Report routes
 		$router->get('/report', 'ReportController@index')

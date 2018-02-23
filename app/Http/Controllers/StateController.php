@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\State;
-use App\Models\Country;
 use Illuminate\Http\Request;
+use App\Models\{Country, State};
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StateFormRequest;
 
@@ -28,9 +27,8 @@ class StateController extends Controller
     public function index()
     {
         $states = (new State)->getStateList();
-        return view('system.state.index', [
-            'states' => $states
-        ]);
+
+        return view('system.state.index', compact('states'));
     }
 
     /**
@@ -41,9 +39,8 @@ class StateController extends Controller
     public function create()
     {
         $countries = $this->getCountries();
-        return view('system.state.create', [
-            'countries' => $countries
-        ]);
+
+        return view('system.state.create', compact('countries'));
     }
 
     /**
@@ -54,9 +51,10 @@ class StateController extends Controller
      */
     public function store(StateFormRequest $request)
     {
-        $input  = $request->except(['_token', '_method']); 
+        $input  = $request->except(['_token', '_method', 'id']); 
         $status = (new State)->addState($input);
-        return redirect()->intended('system-management/state');
+
+        return redirect()->route('system.states.index');
     }
 
     /**
@@ -73,49 +71,46 @@ class StateController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\State  $state
      * @return \Illuminate\Http\Response
      */
-    public function edit(State $id)
+    public function edit(State $state)
     {
-        $state = (new State)->getStateInfo($id);
-        // Redirect to state list if updating state wasn't existed
-        if (empty($state)) {
-            return redirect()->intended('/system-management/state');
-        }
-
         $countries = $this->getCountries();
-        return view('system.state.edit', [
-            'state'     => $state, 
-            'countries' => $countries
-        ]);
+
+        return view('system.state.edit', compact(
+            'countries',
+            'state'
+        ));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\StateFormRequest  $request
-     * @param  int  $id
+     * @param  \App\Models\State  $state
      * @return \Illuminate\Http\Response
      */
-    public function update(StateFormRequest $request, State $id)
+    public function update(StateFormRequest $request, State $state)
     {
-        $input  = $request->except(['_token', '_method']);
-        $status = (new State)->updateState($id, $input);
-        return redirect()->intended('system-management/state');
+        $input  = $request->except(['_token', '_method', 'id']);
+        $state->update($input);
+
+        return redirect()->route('system.states.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Http\Requests\StateFormRequest  $request
-     * @param  int  $id
+     * @param  \App\Models\State  $state
      * @return \Illuminate\Http\Response
      */
-    public function destroy(StateFormRequest $request, State $id)
+    public function destroy(StateFormRequest $request, State $state)
     {
-        $status = (new State)->deleteState($id);
-        return redirect()->intended('system-management/state');
+        $state->delete();
+
+        return redirect()->route('system.states.index');
     }
 
     /**
@@ -130,6 +125,7 @@ class StateController extends Controller
         ];
 
         $states = (new State)->getSearchingQuery($constraints);
+
         return view('system.state.index', [
             'states'        => $states, 
             'searchingVals' => $constraints
@@ -139,6 +135,7 @@ class StateController extends Controller
     private function getCountries()
     {
         $countries = (new Country)->getAllCountries();
+        
         return $countries;
     }
 }

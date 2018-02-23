@@ -30,9 +30,8 @@ class DivisionController extends Controller
     {
         $divisions = $this->division
             ->getDivisions();
-        return view('system.division.index', [
-            'divisions' => $divisions
-        ]);
+
+        return view('system.division.index', compact('divisions'));
     }
 
     /**
@@ -53,67 +52,60 @@ class DivisionController extends Controller
      */
     public function store(DivisionFormRequest $request)
     {
-        $input  = $request->except(['_method', '_token']);
+        $input  = $request->except(['_method', '_token', 'id']);
         $this->division->addDivision($input);
-        return redirect()->intended('system-management/division');
+
+        return redirect()->route('system.divisions.index');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Division  $division
      * @return \Illuminate\Http\Response
      */
-    public function show(Division $id)
+    public function show(Division $division)
     {
-        //
+        return view('system.division.edit', compact('division'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Division  $division
      * @return \Illuminate\Http\Response
      */
-    public function edit(Division $id)
+    public function edit(Division $division)
     {
-        $divisionInfo = $this->division
-            ->getDivisionInfo($id);
-        // Redirect to division list if updating division wasn't existed
-        if (empty($divisionInfo)) {
-            return redirect()->intended('/system-management/division');
-        }
-
-        return view('system.division.edit', [
-            'division' => $divisionInfo
-        ]);
+        return view('system.division.edit', compact('division'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\DivisionFormRequest  $request
-     * @param  int  $id
+     * @param  \App\Models\Division  $division
      * @return \Illuminate\Http\Response
      */
-    public function update(DivisionFormRequest $request, Division $id)
+    public function update(DivisionFormRequest $request, Division $division)
     {
-        $input  = $request->except(['_method', '_token']);
-        $this->division->updateDivision($id, $input);
-        return redirect()->intended('system-management/division');
+        $input  = $request->except(['_method', '_token', 'id']);
+        $division->update($input);
+
+        return redirect()->route('system.divisions.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Models\Division  $division
      * @return \Illuminate\Http\Response
      */
-    public function destroy(DivisionFormRequest $request, Division $id)
+    public function destroy(DivisionFormRequest $request, Division $division)
     {
-        $this->division
-            ->deleteDivision('id', $id);
-        return redirect()->intended('system-management/division');
+        $division->delete();
+
+        return redirect()->route('system.divisions.index');
     }
 
     /**
@@ -127,10 +119,10 @@ class DivisionController extends Controller
         $constraints = [
             'name' => $request['name']
         ];
-
-       $divisions = $this->division
+        $divisions = $this->division
             ->getSearchingQuery($constraints);
-       return view('system.division.index', [
+
+        return view('system.division.index', [
             'divisions'     => $divisions,
             'searchingVals' => $constraints
         ]);

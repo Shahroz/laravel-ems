@@ -2,23 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Country;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Services\CountryService;
 use App\Http\Requests\CountryFormRequest;
 
 class CountryController extends Controller
 {
-    private $country;
+    protected $countryService;
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(CountryService $countryService)
     {
         $this->middleware('auth');
-        $this->country = new Country;
+        $this->countryService = $countryService;
     }
 
     /**
@@ -28,11 +27,9 @@ class CountryController extends Controller
      */
     public function index()
     {
-        $countries = $this->country
-            ->getCountries();
-        return view('system.country.index', [
-            'countries' => $countries
-        ]);
+        $countries = $this->countryService->getAll();
+
+        return view('system.country.index', compact('countries'));
     }
 
     /**
@@ -53,98 +50,92 @@ class CountryController extends Controller
      */
     public function store(CountryFormRequest $request)
     {
-        $input  = $request->except(['_method', '_token']);
-        $status = $this->country
-            ->addCountry($input);
-        return redirect()->intended('system-management/country');
+        $response = $this->countryService->create($request);
+        if (!$response['statius']) {
+            return redirect()->back()
+                ->with('response', $response);
+        }
+
+        return redirect()->route('system.countries.index')
+            ->with('response', $response);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Country  $country
      * @return \Illuminate\Http\Response
      */
-    public function show(Country $id)
+    public function show(Country $country)
     {
-        $countryInfo = $this->country
-            ->getCountryInfo($id);
-        // Redirect to country list if updating country wasn't existed
-        if (empty($countryInfo)) {
-            return redirect()->intended('/system-management/country');
-        }
-
-        return view('system.country.edit', [
-            'country' => $countryInfo
-        ]);
+        return view('system.country.edit', compact('country'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Country  $country
      * @return \Illuminate\Http\Response
      */
-    public function edit(Country $id)
+    public function edit(Country $country)
     {
-        $countryInfo = $this->country
-            ->getCountryInfo($id);
-        // Redirect to country list if updating country wasn't existed
-        if (empty($countryInfo)) {
-            return redirect()->intended('/system-management/country');
-        }
-
-        return view('system.country.edit', [
-            'country' => $countryInfo
-        ]);
+        return view('system.country.edit', compact('country'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Models\Country  $country
      * @return \Illuminate\Http\Response
      */
-    public function update(CountryFormRequest $request, Country $id)
+    public function update(CountryFormRequest $request, Country $country)
     {
-        $input  = $request->except(['_method', '_token']);
-        $status = $this->country
-            ->updateCountry($id, $input);
-        return redirect()->intended('system-management/country');
+        $response = $this->countryService->update($country, $request);
+        if (!$response['statius']) {
+            return redirect()->back()
+                ->with('response', $response);
+        }
+
+        return redirect()->route('system.countries.index')
+            ->with('response', $response);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\Models\Country  $country
      * @return \Illuminate\Http\Response
      */
-    public function destroy(CountryFormRequest $request, Country $id)
+    public function destroy(CountryFormRequest $request, Country $country)
     {
-        $this->country
-            ->deleteCountry($id);
-        return redirect()->intended('system-management/country');
+        $response = $this->countryService->delete($country, $request);
+        if (!$response['statius']) {
+            return redirect()->back()
+                ->with('response', $response);
+        }
+
+        return redirect()->route('system.countries.index')
+            ->with('response', $response);
     }
 
     /**
      * Search country from database base on some specific constraints
      *
      * @param  \Illuminate\Http\Request  $request
-     *  @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response
      */
     public function search(Request $request)
     {
-        $constraints = [
+        $filters = [
             'name'         => $request->get('name'),
             'country_code' => $request->get('country_code')
         ];
+        $countries = $this->countryService->getAll($filters);
 
-       $countries = $this->country
-            ->getSearchingQuery($constraints);
-       return view('system.country.index', [
+        return view('system.country.index', [
             'countries'     => $countries,
-            'searchingVals' => $constraints
+            'searchingVals' => $filters
         ]);
     }
 }

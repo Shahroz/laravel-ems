@@ -19,10 +19,10 @@ class CreateEmployeesTable extends Migration
             $table->string('middlename', 60)->nullable();
             $table->string('lastname', 60);
             $table->string('address', 255);
-            $table->integer('city_id')->unsigned();
+            $table->string('city', 255)->nullable();
             $table->integer('state_id')->unsigned();
             $table->integer('country_id')->unsigned();
-            $table->char('zip', 10)->nullable();
+            $table->char('zipcode', 10)->nullable();
             $table->tinyInteger('age');
             $table->date('birth');
             $table->date('date_hired');
@@ -32,21 +32,26 @@ class CreateEmployeesTable extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('city_id')
-                ->references('id')
-                ->on('city');
             $table->foreign('state_id')
                 ->references('id')
-                ->on('state');
+                ->on('state')
+                ->onUpdate('cascade')
+                ->onDelete('no action');
             $table->foreign('country_id')
                 ->references('id')
-                ->on('country');
+                ->on('country')
+                ->onUpdate('cascade')
+                ->onDelete('no action');
             $table->foreign('department_id')
                 ->references('id')
-                ->on('department');
+                ->on('department')
+                ->onUpdate('cascade')
+                ->onDelete('no action');
             $table->foreign('division_id')
                 ->references('id')
-                ->on('division');
+                ->on('division')
+                ->onUpdate('cascade')
+                ->onDelete('no action');
         });
     }
 
