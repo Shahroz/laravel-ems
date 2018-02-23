@@ -2,23 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Department;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Services\DepartmentService;
 use App\Http\Requests\DepartmentFormRequest;
 
 class DepartmentController extends Controller
 {
-    private $department;
+    protected $departmentService;
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(DepartmentService $departmentService)
     {
         $this->middleware('auth');
-        $this->department = new Department;
+        $this->departmentService = $departmentService;
     }
 
     /**
@@ -28,11 +27,9 @@ class DepartmentController extends Controller
      */
     public function index()
     {
-        $departments = $this->department
-            ->getDepartments();
-        return view('system.department.index', [
-            'departments' => $departments
-        ]);
+        $departments = $this->departmentService->getAll();
+
+        return view('system.department.index', compact('departments'));
     }
 
     /**
@@ -53,87 +50,92 @@ class DepartmentController extends Controller
      */
     public function store(DepartmentFormRequest $request)
     {
-        $input      = $request->except(['_method', '_token']);
-        $department = $this->department->addDepartment($input);
-        return redirect()->intended('system-management/department');
+        $response = $this->departmentService->create($request);
+        if (!$response['statius']) {
+            return redirect()->back()
+                ->with('response', $response);
+        }
+
+        return redirect()->route('system.departments.index')
+            ->with('response', $response);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Department  $department
      * @return \Illuminate\Http\Response
      */
-    public function show(Department $id)
+    public function show(Department $department)
     {
-        //
+        return view('system.department.edit', compact('department'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Department  $department
      * @return \Illuminate\Http\Response
      */
-    public function edit(Department $id)
+    public function edit(Department $department)
     {
-        $department = $this->department
-            ->getDepartmentInfo($id);
-        // Redirect to department list if updating department wasn't existed
-        if (empty($department)) {
-            return redirect()->intended('/system-management/department');
-        }
-
-        return view('system.department.edit', [
-            'department' => $department
-        ]);
+        return view('system.department.edit', compact('department'));
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Models\Department  $department
      * @return \Illuminate\Http\Response
      */
-    public function update(DepartmentFormRequest $request, Department $id)
+    public function update(DepartmentFormRequest $request, Department $department)
     {
-        $input  = $request->except(['_method', '_token']);
-        $status = $this->department
-            ->updateDepartment($id, $input);
-        return redirect()->intended('system-management/department');
+        $response = $this->departmentService->update($department, $request);
+        if (!$response['statius']) {
+            return redirect()->back()
+                ->with('response', $response);
+        }
+
+        return redirect()->route('system.departments.index')
+            ->with('response', $response);
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
+
+     * @param  \App\Models\Department  $department
      * @return \Illuminate\Http\Response
      */
-    public function destroy(DepartmentFormRequest $request, Department $id)
+    public function destroy(DepartmentFormRequest $request, Department $department)
     {
-        $this->department
-            ->deleteDepartment('id', $id);
-        return redirect()->intended('system-management/department');
+        $response = $this->departmentService->delete($department, $request);
+        if (!$response['statius']) {
+            return redirect()->back()
+                ->with('response', $response);
+        }
+
+        return redirect()->route('system.departments.index')
+            ->with('response', $response);
     }
 
     /**
-     * Search department from database base on some specific constraints
+     * Search department from database base on some specific filters
      *
      * @param  \Illuminate\Http\Request  $request
      *  @return \Illuminate\Http\Response
      */
     public function search(Request $request)
     {
-        $constraints = [
+        $filters = [
             'name' => $request->get('name')
         ];
 
-       $departments = $this->department
-            ->getSearchingQuery($constraints);
+       $departments = $this->departmentService->getAll($filters);
+
        return view('system.department.index', [
             'departments'   => $departments,
-            'searchingVals' => $constraints
+            'searchingVals' => $filters
         ]);
     }
 }
