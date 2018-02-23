@@ -3,26 +3,41 @@
 namespace App\Http\Controllers;
 
 use Response;
-use App\Models\City;
-use App\Models\State;
-use App\Models\Country;
-use App\Models\Employee;
-use App\Models\Division;
-use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\EmployeeFormRequest;
+use App\Services\{EmployeeService, DepartmentService, DivisionService, CountryService, StateService};
 
 class EmployeeManagementController extends Controller
 {
+    /**
+     * Instance of Services.
+     */
+    protected $stateService;
+    protected $countryService;
+    protected $employeeService;
+    protected $divisionService;
+    protected $departmetService;
+
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(
+        EmployeeService $employeeService,
+        DepartmentService $departmetService,
+        DivisionService $divisionService,
+        CountryService $countryService,
+        StateService $stateService
+    )
     {
         $this->middleware('auth');
+        $this->stateService     = $stateService;
+        $this->countryService   = $countryService;
+        $this->employeeService  = $employeeService;
+        $this->divisionService  = $divisionService;
+        $this->departmetService = $departmetService;
     }
 
     /**
@@ -30,12 +45,11 @@ class EmployeeManagementController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $employees = (new Employee)->getEmployees();
-        return view('employees.index', [
-            'employees' => $employees
-        ]);
+        $employees = $this->employeeService->getAll($request);
+        
+        return view('employees.index', compact('employees'));
     }
 
     /**
@@ -46,6 +60,7 @@ class EmployeeManagementController extends Controller
     public function create()
     {
         $data = $this->getFormData();
+
         return view('employees.create', $data);
     }
 
@@ -57,42 +72,41 @@ class EmployeeManagementController extends Controller
      */
     public function store(EmployeeFormRequest $request)
     {
-        // Upload image
-        $path            = $request->file('avatar')->store('avatars');
-        $input           = $request->except(['_method', '_token']);
-        $input['avatar'] = $path;
+        $response = $this->employeeService->create($input);
+        if (!$response['status']) {
+            return redirect()->back()
+                ->with('response', $response);
+        }
 
-        $id = (new Employee)->addEmployee($input);
-        return redirect()->intended('/employee-management');
+        return redirect()->route('employee.index')
+            ->with('response', $response);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Employee  $employee
      * @return \Illuminate\Http\Response
      */
-    public function show(Employee $id)
+    public function show(Employee $employee)
     {
-        //
+        $data             = $this->getFormData();
+        $data['employee'] = $employee; 
+
+        return view('employees.edit', $data);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Employee  $employee
      * @return \Illuminate\Http\Response
      */
-    public function edit(Employee $id)
+    public function edit(Employee $employee)
     {
-        $employee = (new Employee)->getEmployeeInfo($id);
-        // Redirect to state list if updating state wasn't existed
-        if (empty($employee)) {
-            return redirect()->intended('/employee-management');
-        }
-
         $data             = $this->getFormData();
         $data['employee'] = $employee; 
+
         return view('employees.edit', $data);
     }
 
@@ -100,32 +114,34 @@ class EmployeeManagementController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \App\Http\Requests\EmployeeFormRequest  $request
-     * @param  int  $id
+     * @param  \App\Models\Employee  $employee
      * @return \Illuminate\Http\Response
      */
-    public function update(EmployeeFormRequest $request, Employee $id)
+    public function update(EmployeeFormRequest $request, Employee $employee)
     {
-        $input = $request->except(['_method', '_token']);
-        if ($request->file('avatar')) {
-            $path = $request->file('avatar')->store('avatars');
-            $input['avatar'] = $path;
+        $response = $this->employeeService->update($employee, $request);
+        if (!$response['status']) {
+            return redirect()->back()
+                ->with('response', $response);
         }
 
-        $status = (new Employee)->updateEmployee($id, $input);
-        return redirect()->intended('/employee-management');
+        return redirect()->route('employee.index')
+            ->with('response', $response);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Http\Requests\EmployeeFormRequest  $request
-     * @param  int  $id
+     * @param  \App\Models\Employee  $employee
      * @return \Illuminate\Http\Response
      */
-    public function destroy(EmployeeFormRequest $request, Employee $id)
+    public function destroy(EmployeeFormRequest $request, Employee $employee)
     {
-        $status = (new Employee)->deleteEmployee($id);
-        return redirect()->intended('/employee-management');
+        $response = $this->employeeService->delete($employee, $request);
+
+        return redirect()->route('employee.index')
+            ->with('response', $response);
     }
 
     /**
@@ -140,7 +156,7 @@ class EmployeeManagementController extends Controller
             'firstname'       => $request->get('firstname'),
             'department.name' => $request->get('department_name')
         ];
-        $employees = (new Employee)->getSearchingQuery($constraints);
+        $employees = $this->employeeService->getAll($constraints);
         $constraints['department_name'] = $request['department_name'];
         
         return view('employees.index', [
@@ -170,11 +186,10 @@ class EmployeeManagementController extends Controller
     private function getFormData()
     {
         $data = [
-            'cities'      => (new City)->getAllCities(),
-            'states'      => (new State)->getAllStates(),
-            'countries'   => (new Country)->getAllCountries(),
-            'departments' => (new Department)->getAllDepartments(),
-            'divisions'   => (new Division)->getAllDivisions()
+            'states'      => $this->stateService->getAll(),
+            'countries'   => $this->countryService->getAll(),
+            'departments' => $this->departmetService->getAll(),
+            'divisions'   => $this->divisionService->getAll()
         ];
 
         return $data;
