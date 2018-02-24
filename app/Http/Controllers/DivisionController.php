@@ -2,23 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Division;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Services\DivisionService;
 use App\Http\Requests\DivisionFormRequest;
 
 class DivisionController extends Controller
 {
-    private $division;
+    protected $divisionService;
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(DivisionService $divisionService)
     {
         $this->middleware('auth');
-        $this->division = new Division;
+        $this->divisionService = $divisionService;
     }
 
     /**
@@ -26,10 +25,9 @@ class DivisionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $divisions = $this->division
-            ->getDivisions();
+        $divisions = $this->divisionService->getAll();
 
         return view('system.division.index', compact('divisions'));
     }
@@ -52,10 +50,14 @@ class DivisionController extends Controller
      */
     public function store(DivisionFormRequest $request)
     {
-        $input  = $request->except(['_method', '_token', 'id']);
-        $this->division->addDivision($input);
+        $response = $this->divisionService->create($request);
+        if (!$response['status']) {
+            return redirect()->back()
+                ->with('response', $response);
+        }
 
-        return redirect()->route('system.divisions.index');
+        return redirect()->route('system.divisions.index')
+            ->with('response', $response);
     }
 
     /**
@@ -89,10 +91,14 @@ class DivisionController extends Controller
      */
     public function update(DivisionFormRequest $request, Division $division)
     {
-        $input  = $request->except(['_method', '_token', 'id']);
-        $division->update($input);
+        $response = $this->divisionService->update($division, $request);
+        if (!$response['status']) {
+            return redirect()->back()
+                ->with('response', $response);
+        }
 
-        return redirect()->route('system.divisions.index');
+        return redirect()->route('system.divisions.index')
+            ->with('response', $response);
     }
 
     /**
@@ -103,28 +109,32 @@ class DivisionController extends Controller
      */
     public function destroy(DivisionFormRequest $request, Division $division)
     {
-        $division->delete();
+        $response = $this->divisionService->delete($division, $request);
+        if (!$response['status']) {
+            return redirect()->back()
+                ->with('response', $response);
+        }
 
-        return redirect()->route('system.divisions.index');
+        return redirect()->route('system.divisions.index')
+            ->with('response', $response);
     }
 
     /**
-     * Search division from database base on some specific constraints
+     * Search division from database base on some specific filters
      *
      * @param  \App\Http\Requests\DivisionFormRequest  $request
      *  @return \Illuminate\Http\Response
      */
     public function search(Request $request)
     {
-        $constraints = [
+        $filters = [
             'name' => $request['name']
         ];
-        $divisions = $this->division
-            ->getSearchingQuery($constraints);
+        $divisions = $this->divisionService->getAll($filters);
 
         return view('system.division.index', [
             'divisions'     => $divisions,
-            'searchingVals' => $constraints
+            'searchingVals' => $filters
         ]);
     }
 }

@@ -51,7 +51,7 @@ class CountryController extends Controller
     public function store(CountryFormRequest $request)
     {
         $response = $this->countryService->create($request);
-        if (!$response['statius']) {
+        if (!$response['status']) {
             return redirect()->back()
                 ->with('response', $response);
         }
@@ -92,7 +92,7 @@ class CountryController extends Controller
     public function update(CountryFormRequest $request, Country $country)
     {
         $response = $this->countryService->update($country, $request);
-        if (!$response['statius']) {
+        if (!$response['status']) {
             return redirect()->back()
                 ->with('response', $response);
         }
@@ -110,7 +110,7 @@ class CountryController extends Controller
     public function destroy(CountryFormRequest $request, Country $country)
     {
         $response = $this->countryService->delete($country, $request);
-        if (!$response['statius']) {
+        if (!$response['status']) {
             return redirect()->back()
                 ->with('response', $response);
         }

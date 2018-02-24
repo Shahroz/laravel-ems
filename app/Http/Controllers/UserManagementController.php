@@ -101,7 +101,7 @@ class UserManagementController extends Controller
      */
     public function update(UserFormRequest $request, User $user)
     {
-        $response = $this->userService->update($request, $user);
+        $response = $this->userService->update($user, $request);
         if (!$response['status']) {
             return redirect()
                 ->back()
@@ -133,7 +133,8 @@ class UserManagementController extends Controller
      * @param  \Illuminate\Http\Request  $request
      *  @return \Illuminate\Http\Response
      */
-    public function search(Request $request) {
+    public function search(Request $request)
+    {
        $users = $this->userService->getAll($request);
 
        return view('users.index', [

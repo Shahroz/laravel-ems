@@ -51,7 +51,7 @@ class DepartmentController extends Controller
     public function store(DepartmentFormRequest $request)
     {
         $response = $this->departmentService->create($request);
-        if (!$response['statius']) {
+        if (!$response['status']) {
             return redirect()->back()
                 ->with('response', $response);
         }
@@ -92,7 +92,7 @@ class DepartmentController extends Controller
     public function update(DepartmentFormRequest $request, Department $department)
     {
         $response = $this->departmentService->update($department, $request);
-        if (!$response['statius']) {
+        if (!$response['status']) {
             return redirect()->back()
                 ->with('response', $response);
         }
@@ -110,7 +110,7 @@ class DepartmentController extends Controller
     public function destroy(DepartmentFormRequest $request, Department $department)
     {
         $response = $this->departmentService->delete($department, $request);
-        if (!$response['statius']) {
+        if (!$response['status']) {
             return redirect()->back()
                 ->with('response', $response);
         }

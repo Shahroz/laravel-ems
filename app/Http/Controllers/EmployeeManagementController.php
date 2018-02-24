@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Response;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Http\Requests\EmployeeFormRequest;
 use App\Services\{EmployeeService, DepartmentService, DivisionService, CountryService, StateService};
 

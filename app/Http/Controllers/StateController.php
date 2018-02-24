@@ -3,20 +3,24 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\{Country, State};
-use Illuminate\Support\Facades\DB;
 use App\Http\Requests\StateFormRequest;
+use App\Services\{CountryService, StateService};
 
 class StateController extends Controller
 {
+    protected $countryService;
+    protected $stateService;
+
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(CountryService $countryService, StateService $stateService)
     {
         $this->middleware('auth');
+        $this->stateService   = $stateService;
+        $this->countryService = $countryService;    
     }
 
     /**
@@ -24,9 +28,9 @@ class StateController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $states = (new State)->getStateList();
+        $states = $this->stateService->getAll();
 
         return view('system.state.index', compact('states'));
     }
@@ -51,10 +55,14 @@ class StateController extends Controller
      */
     public function store(StateFormRequest $request)
     {
-        $input  = $request->except(['_token', '_method', 'id']); 
-        $status = (new State)->addState($input);
+        $response = $this->stateService->create($input);
+        if (!$response['status']) {
+            return redirect()->back()
+                ->with('response', $response);
+        }
 
-        return redirect()->route('system.states.index');
+        return redirect()->route('system.states.index')
+            ->with('response', $response);
     }
 
     /**
@@ -65,7 +73,12 @@ class StateController extends Controller
      */
     public function show(State $id)
     {
-        //
+        $countries = $this->getCountries();
+
+        return view('system.state.edit', compact(
+            'countries',
+            'state'
+        ));
     }
 
     /**
@@ -93,10 +106,14 @@ class StateController extends Controller
      */
     public function update(StateFormRequest $request, State $state)
     {
-        $input  = $request->except(['_token', '_method', 'id']);
-        $state->update($input);
+        $response = $this->stateService->update($state, $input);
+        if (!$response['status']) {
+            return redirect()->back()
+                ->with('response', $response);
+        }
 
-        return redirect()->route('system.states.index');
+        return redirect()->route('system.states.index')
+            ->with('response', $response);
     }
 
     /**
@@ -108,34 +125,37 @@ class StateController extends Controller
      */
     public function destroy(StateFormRequest $request, State $state)
     {
-        $state->delete();
+        $response = $this->stateService->delete($state);
+        if (!$response['status']) {
+            return redirect()->back()
+                ->with('response', $response);
+        }
 
-        return redirect()->route('system.states.index');
+        return redirect()->route('system.states.index')
+            ->with('response', $response);
     }
 
     /**
-     * Search state from database base on some specific constraints
+     * Search state from database base on some specific filters
      *
      * @param  \Illuminate\Http\Request  $request
      *  @return \Illuminate\Http\Response
      */
     public function search(Request $request) {
-        $constraints = [
-            'name' => $request['name']
+        $filters = [
+            'name' => $request->get('name')
         ];
 
-        $states = (new State)->getSearchingQuery($constraints);
+        $states = $this->stateService->getAll($filters);
 
         return view('system.state.index', [
             'states'        => $states, 
-            'searchingVals' => $constraints
+            'searchingVals' => $filters
         ]);
     }
 
     private function getCountries()
     {
-        $countries = (new Country)->getAllCountries();
-        
-        return $countries;
+        return $this->countryService->getAll();
     }
 }
