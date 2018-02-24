@@ -27,6 +27,12 @@ class CountryRepository extends AbstractRepository
         return $query->paginate($limit);
     }
 
+    public function getCountryList()
+    {
+
+        return $this->model->all();
+    }
+
     public function create($data)
     {
         $response = [

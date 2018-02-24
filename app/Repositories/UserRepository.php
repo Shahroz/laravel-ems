@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserRepository extends AbstractRepository
 {
@@ -61,7 +60,7 @@ class UserRepository extends AbstractRepository
             $this->model->update($input);
             $response['status']  = 1;
             $response['message'] = 'Record updated successfully!'; 
-        } catch(ModelNotFoundException $ex) {
+        } catch(\Exception $ex) {
             $response['error'] = $ex->getMessage();
         }
 
@@ -81,7 +80,7 @@ class UserRepository extends AbstractRepository
             $this->model->delete();
             $response['status']  = 1;
             $response['message'] = 'Record deleted successfully!'; 
-        } catch(ModelNotFoundException $ex) {
+        } catch(\Exception $ex) {
             $response['error'] = $ex->getMessage();
         }
 
