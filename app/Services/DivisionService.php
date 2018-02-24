@@ -19,6 +19,11 @@ class DivisionService
         return $this->divisionRepository->getAll($filters);
     }
 
+    public function getDivisionList()
+    {
+        return $this->divisionRepository->getDivisionList();
+    }
+
     public function create(Request $request)
     {
         $input = $request->except(['_token', '_method', 'id']);
@@ -33,7 +38,7 @@ class DivisionService
         return $this->divisionRepository->update($division, $input);
     }
 
-    public function delete(Division $division, Request $request)
+    public function delete(Division $division)
     {
         return $this->divisionRepository->delete($division);
     }

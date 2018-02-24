@@ -9,27 +9,27 @@ Route::get('/profile', 'ProfileController@index')
 	->middleware('auth');
 Route::group([
 		'prefix' => 'user-management', 
-		'as' => 'user.',
+		'as' => 'users.',
 		'middleware' => 'auth'
 	], function ($router) {
 	    $router->post('/search', 'UserManagementController@search')
 			->name('search');
 });
 Route::resource('/user-management', 'UserManagementController', [
-	'names' 	 => 'user', 
+	'names' 	 => 'users', 
 	'parameters' => [
 		'user-management' => 'user'
 	]
 ]);
 
 Route::group(
-	['prefix' => 'employee-management', 'as' => 'employee.',
+	['prefix' => 'employee-management', 'as' => 'employees.',
     'middleware' => 'auth'], function ($router) {
     	$router->post('/search', 'EmployeeManagementController@search')
 			->name('search');
 });
 Route::resource('/employee-management', 'EmployeeManagementController', [
-	'names' 	 => 'employee', 
+	'names' 	 => 'employees', 
 	'parameters' => [
 		'employee-management' => 'employee'
 	]
@@ -59,15 +59,15 @@ Route::group(
 			->name('states.search');
 
 		// Report routes
-		$router->get('/report', 'ReportController@index')
-			->name('report.index');
+		$router->get('/reports', 'ReportController@index')
+			->name('reports.index');
 		$router->post('/report/search', 'ReportController@search')
-			->name('report.search');
+			->name('reports.search');
 
-		$router->post('/report/excel', 'ReportController@exportExcel')
-			->name('report.excel');
-		$router->post('/report/pdf', 'ReportController@exportPDF')
-			->name('report.pdf');	
+		$router->post('/reports/excel', 'ReportController@exportExcel')
+			->name('reports.excel');
+		$router->post('/reports/pdf', 'ReportController@exportPDF')
+			->name('reports.pdf');	
 });
 
 Route::get('avatars/{name}', 'EmployeeManagementController@load');

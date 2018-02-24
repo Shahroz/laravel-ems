@@ -91,11 +91,11 @@
       <script>
       $(document).ready(function() {
         //Date picker
-        $('#birthDate').datepicker({
+        $('#input-birthdate').datepicker({
           autoclose: true,
           format: 'yyyy/mm/dd'
         });
-        $('#hiredDate').datepicker({
+        $('#input-date-hired').datepicker({
           autoclose: true,
           format: 'yyyy/mm/dd'
         });

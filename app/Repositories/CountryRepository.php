@@ -29,8 +29,7 @@ class CountryRepository extends AbstractRepository
 
     public function getCountryList()
     {
-
-        return $this->model->all();
+        return $this->model->pluck('name', 'id');
     }
 
     public function create($data)

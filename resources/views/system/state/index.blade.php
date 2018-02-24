@@ -9,7 +9,7 @@
           <h3 class="box-title">List of states</h3>
         </div>
         <div class="col-xs-2">
-          <a class="btn btn-primary pull-right" href="{{ route('system.state.create') }}" title="Add new state" data-toggle="tooltip">
+          <a class="btn btn-primary pull-right" href="{{ route('system.states.create') }}" title="Add new state" data-toggle="tooltip">
             <i class="fa fa-plus"></i>
           </a>
         </div>
@@ -21,7 +21,7 @@
         <div class="col-sm-6"></div>
         <div class="col-sm-6"></div>
       </div>
-      <form method="POST" action="{{ route('system.state.search') }}">
+      <form method="POST" action="{{ route('system.states.search') }}">
          {{ csrf_field() }}
          @component('layouts.search', ['title' => 'Search'])
           @component('layouts.two-cols-search-row', [
@@ -51,12 +51,12 @@
             @foreach ($states as $state)
                 <tr role="row" class="odd">
                   <td>{{ $state->name }}</td>
-                  <td>{{ $state->country_name }}</td>
+                  <td>{{ $state->country->name }}</td>
                   <td>
-                    <form method="POST" action="{{ route('system.state.destroy', ['id' => $state->id]) }}" onsubmit = "return confirm('Are you sure?')">
+                    <form method="POST" action="{{ route('system.states.destroy', ['state' => $state->id]) }}" onsubmit = "return confirm('Are you sure?')">
                         <input type="hidden" name="_method" value="DELETE">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <a href="{{ route('system.state.edit', ['id' => $state->id]) }}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Update">
+                        <a href="{{ route('system.states.edit', ['state' => $state->id]) }}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Update">
                       <i class="fa fa-pencil"></i>
                     </a>
                     <button type="submit" class="btn btn-sm btn-danger">

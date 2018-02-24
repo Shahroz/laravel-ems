@@ -24,32 +24,26 @@ class UserFormRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'username'   => 'required|max:20|unique:users',
+            'username'   => 'required|string|max:20|unique:users',
             'email'      => 'required|email|max:255|unique:users',
             'password'   => 'required|min:8|confirmed',
-            'first_name' => 'required|max:60',
-            'last_name'  => 'required|max:60'
+            'first_name' => 'required|string|max:60',
+            'last_name'  => 'required|string|max:60'
         ];
 
         switch ($this->method()) {
             case 'PUT':
             case 'PATCH':
-                $rules['id']       = 'required|integer|exists:users';
-                $user              = (new User)->getUserInfo($this->get('id', 0), ['id']);
-                if (empty($user)) {
-                    return $rules;
-                }
+                $userId             = $this->route()->parameter('user')->id;
+                $rules['email']    .= sprintf(",email,%s", $userId);
+                $rules['username'] .= sprintf(",username,%s", $userId);
 
-                $userId            = $user['id'];
-                $rules['email']    = 'required|integer|unique:users,' . $userId;
-                $rules['username'] = 'required|integer|exists:users,' . $userId;
-
-                if (!$this->has('password')) {
+                if (is_null($this->get('password'))) {
                     unset($rules['password']);
                     unset($rules['password_confirmation']);
                 }
         }
-
+        
         return $rules;
     }
 }

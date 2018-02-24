@@ -24,10 +24,15 @@ class DepartmentFormRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name' => 'required|max:60|unique:department'
+            'name' => 'required|max:60|unique:departments'
         ];
-        if ($this->isMethod('put')) {
-            $rules['name'] .= ',' . $this->get('id', null); 
+
+        switch ($this->method()) {
+            case 'PUT':
+            case 'PATCH':
+                $departmentId   = $this->route()->parameter('department')->id;
+                $rules['name'] .= sprintf(',name,%s', $departmentId);
+                break;  
         }
 
         return $rules;

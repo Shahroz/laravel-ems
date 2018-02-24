@@ -13,16 +13,16 @@ class UserRepository extends AbstractRepository
         $this->model = $user;
     }
 
-    public function getAll($filters = [], $limit = null)
+    public function getAll($filters = [], $limit = 20)
     {
         $query = $this->model;
         foreach ($filters as $key => $value) {
-            if (!is_null($key) && !is_null($value)) {
-                $query = $query->where($key, 'like', "%{$value}%");
+            if (!is_null($value)) {
+                $query = $query->whereRaw("LOWER(`{$key}`) LIKE ?", "%{$value}%");
             }
         }
 
-        return $this->model->paginate($limit);
+        return $query->paginate($limit);
     }
 
     public function create($data = [])
@@ -54,15 +54,18 @@ class UserRepository extends AbstractRepository
         {
             $this->model = $user;
             if (isset($data['password']) && strlen($data['password']) >= 8) {
-                $input['password'] =  bcrypt($input['password']);
+                $data['password'] =  bcrypt($data['password']);
+            } else {
+                unset($data['password']);
             }
 
-            $this->model->update($input);
+            $this->model->update($data);
             $response['status']  = 1;
             $response['message'] = 'Record updated successfully!'; 
         } catch(\Exception $ex) {
             $response['error'] = $ex->getMessage();
         }
+
 
         return $response;
     }

@@ -27,6 +27,11 @@ class DivisionRepository extends AbstractRepository
         return $query->paginate($limit);
     }
 
+    public function getDivisionList()
+    {
+        return $this->model->pluck('name', 'id');
+    }
+
     public function create($data)
     {
         $response = [

@@ -34,22 +34,22 @@ class CreateEmployeesTable extends Migration
 
             $table->foreign('state_id')
                 ->references('id')
-                ->on('state')
+                ->on('states')
                 ->onUpdate('cascade')
                 ->onDelete('no action');
             $table->foreign('country_id')
                 ->references('id')
-                ->on('country')
+                ->on('countries')
                 ->onUpdate('cascade')
                 ->onDelete('no action');
             $table->foreign('department_id')
                 ->references('id')
-                ->on('department')
+                ->on('departments')
                 ->onUpdate('cascade')
                 ->onDelete('no action');
             $table->foreign('division_id')
                 ->references('id')
-                ->on('division')
+                ->on('divisions')
                 ->onUpdate('cascade')
                 ->onDelete('no action');
         });

@@ -7,14 +7,13 @@
       <div class="panel panel-default">
         <div class="panel-heading">Update division</div>
         <div class="panel-body">
-          <form class="form-horizontal" role="form" method="POST" action="{{ route('system.division.update', ['id' => $division->id]) }}">
-            <input type="hidden" name="_method" value="PATCH">
-            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+          {!! Form::model($division, ['route' => ['system.divisions.update', $division->id], 'id' => 'form-divison', 'class' => 'form-horizontal']) !!}
+
             <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-              <label for="name" class="col-md-4 control-label">Division Name</label>
+              {!! Form::label('input-name', 'Department Name', ['class' => 'col-md-4 control-label']) !!}
 
               <div class="col-md-6">
-                <input id="name" type="text" class="form-control" name="name" value="{{ $division->name }}" required autofocus>
+                {!! Form::text('name', old('name', $division->name), ['class' => 'form-control', 'id' => 'input-name', 'autofocus', true, 'required' => true]) !!}
 
                 @if ($errors->has('name'))
                 <span class="help-block">
@@ -25,12 +24,10 @@
             </div>
             <div class="form-group">
               <div class="col-md-6 col-md-offset-4">
-                <button type="submit" class="btn btn-primary">
-                  Update
-                </button>
+                {!! Form::submit('Create', ['class' => 'btn btn-primary']) !!}
               </div>
             </div>
-          </form>
+          {!! Form::close() !!}
         </div>
       </div>
     </div>

@@ -44,7 +44,7 @@ class CountryService
         return $this->countryRepository->update($country, $input);
     }
 
-    public function delete(Country $country, Request $request)
+    public function delete(Country $country)
     {
         return $this->countryRepository->delete($country);
     }

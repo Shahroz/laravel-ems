@@ -24,12 +24,15 @@ class DivisionFormRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name' => 'required|max:60|unique:division'
+            'name' => 'required|max:60|unique:divisions'
         ];
 
-        if ($this->isMethod('put')) {
-            $rules['id']    = 'required|integer|exists:division';
-            $rules['name'] .= ',' . $this->get('id', null); 
+        switch ($this->method()) {
+            case 'PUT':
+            case 'PATCH':
+                $divisionId   = $this->route()->parameter('division')->id;
+                $rules['name'] .= sprintf(',name,%s', $divisionId);
+                break; 
         }
 
         return $rules;

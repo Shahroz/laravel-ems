@@ -47,7 +47,7 @@ class EmployeeService
         return $this->employeeRepository->update($employee, $input);
     }
 
-    public function delete(Employee $employee, Request $request)
+    public function delete(Employee $employee)
     {
         return $this->employeeRepository->delete($employee);
     }
@@ -61,7 +61,7 @@ class EmployeeService
         return $this->employeeRepository->getHiredEmployees($filters);
     }
 
-    public function getHiredEmployees($filters = [])
+    public function getExportingData($filters = [])
     {
         if (empty($filters)) {
             return [];

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\State;
 use Illuminate\Http\Request;
 use App\Http\Requests\StateFormRequest;
 use App\Services\{CountryService, StateService};
@@ -55,7 +56,7 @@ class StateController extends Controller
      */
     public function store(StateFormRequest $request)
     {
-        $response = $this->stateService->create($input);
+        $response = $this->stateService->create($request);
         if (!$response['status']) {
             return redirect()->back()
                 ->with('response', $response);
@@ -68,10 +69,10 @@ class StateController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\State  $state
      * @return \Illuminate\Http\Response
      */
-    public function show(State $id)
+    public function show(State $state)
     {
         $countries = $this->getCountries();
 
@@ -106,7 +107,7 @@ class StateController extends Controller
      */
     public function update(StateFormRequest $request, State $state)
     {
-        $response = $this->stateService->update($state, $input);
+        $response = $this->stateService->update($state, $request);
         if (!$response['status']) {
             return redirect()->back()
                 ->with('response', $response);
@@ -123,7 +124,7 @@ class StateController extends Controller
      * @param  \App\Models\State  $state
      * @return \Illuminate\Http\Response
      */
-    public function destroy(StateFormRequest $request, State $state)
+    public function destroy(Request $request, State $state)
     {
         $response = $this->stateService->delete($state);
         if (!$response['status']) {
@@ -156,6 +157,6 @@ class StateController extends Controller
 
     private function getCountries()
     {
-        return $this->countryService->getAll();
+        return $this->countryService->getCountryList();
     }
 }

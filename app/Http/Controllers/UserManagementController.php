@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Validator;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\UserService;
@@ -115,11 +116,11 @@ class UserManagementController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Http\Requests\UserFormRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(UserFormRequest $request, User $user)
+    public function destroy(Request $request, User $user)
     {
         $response = $this->userService->delete($user);
 

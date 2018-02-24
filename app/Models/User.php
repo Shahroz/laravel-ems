@@ -34,39 +34,4 @@ class User extends Authenticatable
     protected $filllable = [
         'username', 'email', 'first_name', 'last_name'
     ];
-
-    /**
-     * Add new user
-     * @param array $input
-     * @return int
-     */
-    public function addUser($input = [])
-    {
-        $status = 0;
-        if (empty($input)) {
-            return $status;
-        }
-
-        return $this->create($input);
-    }
-    
-    /**
-     * Remove user
-     * @param null $id
-     * @return int
-     */
-    public function deleteUser($id = null)
-    {
-        $status = 0;
-        try
-        {
-            $user = $this->findOrFail($id);
-            $user->delete();
-            $status = 1;
-        } catch(ModelNotFoundException $e) {
-            return $status;
-        }
-
-        return $status;
-    }
 }

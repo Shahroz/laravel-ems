@@ -13,10 +13,10 @@ class CreateCountryTable extends Migration
      */
     public function up()
     {
-        Schema::create('country', function (Blueprint $table) {
+        Schema::create('countries', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('country_code', 3);
-            $table->string('name', 60);
+            $table->string('code', 3)->index()->unique();
+            $table->string('name', 60)->index()->unique();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -29,6 +29,6 @@ class CreateCountryTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('country');
+        Schema::dropIfExists('countries');
     }
 }

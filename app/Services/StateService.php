@@ -14,7 +14,7 @@ class StateService
      *
      * @return void
      */
-    public function __construct(CountryRepository $stateRepository)
+    public function __construct(StateRepository $stateRepository)
     {
         $this->stateRepository = $stateRepository;
     }
@@ -24,9 +24,9 @@ class StateService
         return $this->stateRepository->getAll($filters);
     }
 
-    public function getCountryList()
+    public function getStateList()
     {
-        return $this->stateRepository->getCountryList();
+        return $this->stateRepository->getStateList();
     }
 
     public function create(Request $request)
@@ -43,7 +43,7 @@ class StateService
         return $this->stateRepository->update($state, $input);
     }
 
-    public function delete(State $state, Request $request)
+    public function delete(State $state)
     {
         return $this->stateRepository->delete($state);
     }

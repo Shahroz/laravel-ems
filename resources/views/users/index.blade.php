@@ -9,7 +9,7 @@
           <h3 class="box-title">List of users</h3>
         </div>
         <div class="col-xs-2">
-          <a class="btn btn-primary pull-right" href="{{ route('user.create') }}" title="Add new user" data-toggle="tooltip">
+          <a class="btn btn-primary pull-right" href="{{ route('users.create') }}" title="Add new user" data-toggle="tooltip">
             <i class="fa fa-plus"></i>
           </a>
         </div>
@@ -21,7 +21,7 @@
         <div class="col-sm-6"></div>
         <div class="col-sm-6"></div>
       </div>
-      <form method="POST" action="{{ route('user.search') }}">
+      <form method="POST" action="{{ route('users.search') }}">
        {{ csrf_field() }}
        @component('layouts.search', ['title' => 'Search'])
        @component('layouts.two-cols-search-row', [
@@ -47,10 +47,10 @@
               'value' => isset($searchingVals) && isset($searchingVals['last_name']) ? 
                 $searchingVals['last_name'] : ''
             ],
-            'department' => [
-              'label' => 'Department',
-              'value' => isset($searchingVals) && isset($searchingVals['department']) ? 
-                $searchingVals['department'] : ''
+            'email' => [
+              'label' => 'Email',
+              'value' => isset($searchingVals) && isset($searchingVals['email']) ? 
+                $searchingVals['email'] : ''
             ]            
           ]
         ])
@@ -78,10 +78,10 @@
               <td class="hidden-xs">{{ $user->first_name }}</td>
               <td class="hidden-xs">{{ $user->last_name }}</td>
               <td>
-                <form class="row" method="POST" action="{{ route('user.destroy', ['id' => $user->id]) }}" onsubmit = "return confirm('Are you sure?')">
+                <form class="row" method="POST" action="{{ route('users.destroy', ['id' => $user->id]) }}" onsubmit = "return confirm('Are you sure?')">
                   <input type="hidden" name="_method" value="DELETE">
                   <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                  <a href="{{ route('user.edit', ['id' => $user->id]) }}" class="btn btn-warning col-sm-3 col-xs-5 btn-margin" data-toggle="tooltip" title="Update">
+                  <a href="{{ route('users.edit', ['id' => $user->id]) }}" class="btn btn-warning col-sm-3 col-xs-5 btn-margin" data-toggle="tooltip" title="Update">
                     <i class="fa fa-pencil"></i>
                   </a>
                   @if ($user->username != Auth::user()->username)

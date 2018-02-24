@@ -20,6 +20,11 @@ class DepartmentService
         return $this->departmentRepository->getAll($filters);
     }
 
+    public function getDepartmentList()
+    {
+        return $this->departmentRepository->getDepartmentList();
+    }
+
     public function create(Request $request)
     {
         $input = $request->except(['_method', '_token', 'id']);
@@ -34,7 +39,7 @@ class DepartmentService
         return $this->departmentRepository->update($department, $input);
     }
 
-    public function delete(Department $department, Request $request)
+    public function delete(Department $department)
     {
         return $this->departmentRepository->delete($department);
     }

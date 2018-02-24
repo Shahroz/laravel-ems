@@ -24,13 +24,17 @@ class CountryFormRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name'         => 'required|max:60|unique:country',
-            'country_code' => 'required|max:3|unique:country'
+            'name' => 'required|max:60|unique:countries',
+            'code' => 'required|max:3|unique:countries'
         ];
 
-        if ($this->isMethod('put')) {
-            $rules['name']         .= ',' . $this->get('id', null); 
-            $rules['country_code'] .= ',' . $this->get('id', null); 
+        switch ($this->method()) {
+            case 'PUT':
+            case 'PATCH':
+                $countryId     = $this->route()->parameter('country')->id;
+                $rules['name'] .= sprintf(',name,%s', $countryId); 
+                $rules['code'] .= sprintf(',code,%s', $countryId);
+                break;  
         }
 
         return $rules;

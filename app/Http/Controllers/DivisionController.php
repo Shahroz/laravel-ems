@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Division;
 use Illuminate\Http\Request;
 use App\Services\DivisionService;
 use App\Http\Requests\DivisionFormRequest;
@@ -107,9 +108,9 @@ class DivisionController extends Controller
      * @param  \App\Models\Division  $division
      * @return \Illuminate\Http\Response
      */
-    public function destroy(DivisionFormRequest $request, Division $division)
+    public function destroy(Request $request, Division $division)
     {
-        $response = $this->divisionService->delete($division, $request);
+        $response = $this->divisionService->delete($division);
         if (!$response['status']) {
             return redirect()->back()
                 ->with('response', $response);

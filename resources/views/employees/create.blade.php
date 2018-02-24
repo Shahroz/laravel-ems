@@ -1,21 +1,18 @@
-  @extends('employees.base')
+@extends('employees.base')
 
-  @section('action-content')
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="panel panel-default">
-          <div class="panel-heading">Add new employee</div>
-          <div class="panel-body">
-            <form class="form-horizontal" role="form" method="POST" action="{{ route('employee.store') }}"
-            enctype="multipart/form-data">
-            {{ csrf_field() }}
+@section('action-content')
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">Add New Employee</div>
+        <div class="panel-body">
+          {!! Form::open(['route' => 'employees.store', 'id' => 'form-employee', 'enctype' => 'multipart/form-data', 'class' => 'form-horizontal']) !!}
             <div class="form-group{{ $errors->has('firstname') ? ' has-error' : '' }}">
-              <label for="input-firstname" class="col-md-4 control-label">First Name</label>
+              {!! Form::label('input-firstname', 'First Name', ['class' => 'col-md-4 control-label']) !!}
 
               <div class="col-md-6">
-                <input id="input-firstname" type="text" class="form-control" name="firstname"
-                value="{{ old('firstname') }}" required autofocus />
+                {!! Form::text('firstname', old('firstname'), ['class' => 'form-control', 'required' => true, 'autofocus' => true, 'id' => 'input-firstname']) !!}
 
                 @if ($errors->has('firstname'))
                 <span class="help-block">
@@ -25,11 +22,10 @@
               </div>
             </div>
             <div class="form-group{{ $errors->has('middlename') ? ' has-error' : '' }}">
-              <label for="input-middlename" class="col-md-4 control-label">Middle Name</label>
+              {!! Form::label('input-middlename', 'Middle Name', ['class' => 'col-md-4 control-label']) !!}
 
               <div class="col-md-6">
-                <input id="input-middlename" type="text" class="form-control" name="middlename"
-                value="{{ old('middlename') }}" />
+                {!! Form::text('middlename', old('middlename'), ['class' => 'form-control', 'id' => 'input-middlename']) !!}
 
                 @if ($errors->has('middlename'))
                 <span class="help-block">
@@ -39,11 +35,10 @@
               </div>
             </div>
             <div class="form-group{{ $errors->has('lastname') ? ' has-error' : '' }}">
-              <label for="input-lastname" class="col-md-4 control-label">Last Name</label>
+              {!! Form::label('input-lastname', 'Last Name', ['class' => 'col-md-4 control-label']) !!}
 
               <div class="col-md-6">
-                <input id="input-lastname" type="text" class="form-control" name="lastname"
-                value="{{ old('lastname') }}" required />
+                {!! Form::text('lastname', old('lastname'), ['class' => 'form-control', 'required' => true, 'id' => 'input-lastname']) !!}
 
                 @if ($errors->has('lastname'))
                 <span class="help-block">
@@ -53,11 +48,10 @@
               </div>
             </div>
             <div class="form-group{{ $errors->has('address') ? ' has-error' : '' }}">
-              <label for="input-address" class="col-md-4 control-label">Address</label>
+              {!! Form::label('input-address', 'Address', ['class' => 'col-md-4 control-label']) !!}
 
               <div class="col-md-6">
-                <input id="input-address" type="text" class="form-control" name="address"
-                value="{{ old('address') }}" required />
+                {!! Form::text('address', old('address'), ['class' => 'form-control', 'required' => true, 'id' => 'input-address']) !!}
 
                 @if ($errors->has('address'))
                 <span class="help-block">
@@ -67,26 +61,21 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="input-city" class="col-md-4 control-label">City</label>
+              {!! Form::label('input-country', 'Country', ['class' => 'col-md-4 control-label']) !!}
               <div class="col-md-6">
-                <input id="input-city" type="text" class="form-control" name="city"
-                  value="{{ old('city') }}" required />
+                {!! Form::select('country_id', $countries, old('country_id'), ['class' => 'form-control', 'required' => true, 'id' => 'input-country']) !!}
 
-                  @if ($errors->has('city'))
-                  <span class="help-block">
-                    <strong>{{ $errors->first('city') }}</strong>
-                  </span>
-                  @endif
+                @if ($errors->has('country_id'))
+                <span class="help-block">
+                  <strong>{{ $errors->first('country_id') }}</strong>
+                </span>
+                @endif
               </div>
             </div>
             <div class="form-group">
-              <label class="col-md-4 control-label" for="input-state">State</label>
+              {!! Form::label('input-state', 'State', ['class' => 'col-md-4 control-label']) !!}
               <div class="col-md-6">
-                <select class="form-control" name="state_id" id="input-state">
-                  @foreach ($states as $state)
-                  <option value="{{$state->id}}">{{$state->name}}</option>
-                  @endforeach
-                </select>
+                {!! Form::select('state_id', $states, old('state_id'), ['class' => 'form-control', 'required' => true, 'id' => 'input-state']) !!}
 
                 @if ($errors->has('state_id'))
                 <span class="help-block">
@@ -96,27 +85,21 @@
               </div>
             </div>
             <div class="form-group">
-              <label class="col-md-4 control-label" for="input-country">Country</label>
+              {!! Form::label('input-city', 'City', ['class' => 'col-md-4 control-label']) !!}
               <div class="col-md-6">
-                <select class="form-control" name="country_id" id="input-country">
-                  @foreach ($countries as $country)
-                  <option value="{{$country->id}}">{{$country->name}}</option>
-                  @endforeach
-                </select>
+                {!! Form::text('city', old('city'), ['class' => 'form-control', 'required' => true, 'id' => 'input-city']) !!}
 
-                @if ($errors->has('country_id'))
+                @if ($errors->has('city'))
                 <span class="help-block">
-                  <strong>{{ $errors->first('country_id') }}</strong>
+                  <strong>{{ $errors->first('city') }}</strong>
                 </span>
                 @endif
               </div>
             </div>
             <div class="form-group{{ $errors->has('zipcode') ? ' has-error' : '' }}">
-              <label for="input-zipcode" class="col-md-4 control-label">Zip</label>
-
+              {!! Form::label('input-zipcode', 'Zipcode', ['class' => 'col-md-4 control-label']) !!}
               <div class="col-md-6">
-                <input id="input-zipcode" type="text" class="form-control" name="zipcode"
-                value="{{ old('zipcode') }}" required>
+                {!! Form::text('zipcode', old('zipcode'), ['class' => 'form-control', 'required' => true, 'id' => 'input-zipcode']) !!}
 
                 @if ($errors->has('zipcode'))
                 <span class="help-block">
@@ -126,11 +109,11 @@
               </div>
             </div>
             <div class="form-group{{ $errors->has('age') ? ' has-error' : '' }}">
-              <label for="input-age" class="col-md-4 control-label">Age</label>
+              {!! Form::label('input-age', 'Age', ['class' => 'col-md-4 control-label']) !!}
 
               <div class="col-md-6">
-                <input id="input-age" type="text" class="form-control" name="age"
-                value="{{ old('age') }}" required>
+                {!! Form::number('age', old('age'), ['class' => 'form-control', 
+                  'required' => true, 'id' => 'input-age', 'pattern' => '[0-9]{2}', 'step' => 1, 'min' => 18, 'max' => 70]) !!}
 
                 @if ($errors->has('age'))
                 <span class="help-block">
@@ -140,14 +123,13 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="input-birthdate" class="col-md-4 control-label">Birthday</label>
+              {!! Form::label('input-birthday', 'Birthday', ['class' => 'col-md-4 control-label']) !!}
               <div class="col-md-6">
                 <div class="input-group date">
                   <div class="input-group-addon">
                     <i class="fa fa-calendar"></i>
                   </div>
-                  <input type="text" value="{{ old('birthdate') }}" name="birthdate" id="input-birthdate"
-                  class="form-control pull-right" required />
+                  {!! Form::text('birthdate', old('birthdate'), ['class' => 'form-control pull-right', 'required' => true, 'id' => 'input-birthdate']) !!}
                 </div>
 
                 @if ($errors->has('birthdate'))
@@ -158,14 +140,13 @@
               </div>
             </div>
             <div class="form-group">
-              <label class="col-md-4 control-label" for="input-date-hire">Hired Date</label>
+              {!! Form::label('input-date-hired', 'Hired Date', ['class' => 'col-md-4 control-label']) !!}
               <div class="col-md-6">
                 <div class="input-group date">
                   <div class="input-group-addon">
                     <i class="fa fa-calendar"></i>
                   </div>
-                  <input type="text" value="{{ old('date_hired') }}" name="date_hired"
-                  class="form-control pull-right" id="input-date-hire" required />
+                  {!! Form::text('date_hired', old('date_hired'), ['class' => 'form-control pull-right', 'required' => true, 'id' => 'input-date-hired']) !!}
                 </div>
 
                 @if ($errors->has('date_hired'))
@@ -176,13 +157,9 @@
               </div>
             </div>
             <div class="form-group">
-              <label class="col-md-4 control-label" for="input-department">Department</label>
+              {!! Form::label('input-department', 'Department', ['class' => 'col-md-4 control-label']) !!}
               <div class="col-md-6">
-                <select class="form-control" name="department_id" id="input-department">
-                  @foreach ($departments as $department)
-                  <option value="{{$department->id}}">{{$department->name}}</option>
-                  @endforeach
-                </select>
+                {!! Form::select('department_id', $departments, old('department_id'), ['class' => 'form-control', 'required' => true, 'id' => 'input-department']) !!}
 
                 @if ($errors->has('department_id'))
                 <span class="help-block">
@@ -192,13 +169,9 @@
               </div>
             </div>
             <div class="form-group">
-              <label class="col-md-4 control-label" for="input-devision">Division</label>
+              {!! Form::label('input-division', 'Division', ['class' => 'col-md-4 control-label']) !!}
               <div class="col-md-6">
-                <select class="form-control" name="division_id" id="input-devision">
-                  @foreach ($divisions as $division)
-                  <option value="{{$division->id}}">{{$division->name}}</option>
-                  @endforeach
-                </select>
+                {!! Form::select('division_id', $divisions, old('division_id'), ['class' => 'form-control', 'required' => true, 'id' => 'input-division']) !!}
 
                 @if ($errors->has('division_id'))
                 <span class="help-block">
@@ -208,11 +181,11 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="input-avatar" class="col-md-4 control-label" for="input-avatar">Picture</label>
+              {!! Form::label('input-avatar', 'Picture', ['class' => 'col-md-4 control-label']) !!}
               <div class="col-md-6">
-                <input type="file" id="input-avatar" name="avatar" />
-
+                {!! Form::file('avatar', null, ['id' => 'input-avatar']) !!}
                 @if ($errors->has('avatar'))
+
                 <span class="help-block">
                   <strong>{{ $errors->first('avatar') }}</strong>
                 </span>
@@ -221,12 +194,10 @@
             </div>
             <div class="form-group">
               <div class="col-md-6 col-md-offset-4">
-                <button type="submit" class="btn btn-primary">
-                  Create
-                </button>
+                {!! Form::submit('Create', ['class' => 'btn btn-primary']) !!}
               </div>
             </div>
-          </form>
+          {!! Form::close() !!}
         </div>
       </div>
     </div>

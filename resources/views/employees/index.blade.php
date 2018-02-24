@@ -9,7 +9,7 @@
           <h3 class="box-title">List of employees</h3>
         </div>
         <div class="col-xs-2">
-          <a class="btn btn-primary pull-right" href="{{ route('employee.create') }}" title="Add new employee" data-toggle="tooltip">
+          <a class="btn btn-primary pull-right" href="{{ route('employees.create') }}" title="Add new employee" data-toggle="tooltip">
             <i class="fa fa-plus"></i>
           </a>
         </div>
@@ -21,7 +21,7 @@
         <div class="col-sm-6"></div>
         <div class="col-sm-6"></div>
       </div>
-      <form method="POST" action="{{ route('employee.search') }}">
+      <form method="POST" action="{{ route('employees.search') }}">
        {{ csrf_field() }}
        @component('layouts.search', ['title' => 'Search'])
        @component('layouts.two-cols-search-row', [
@@ -70,10 +70,10 @@
                 <td class="hidden-xs">{{ $employee->department_name }}</td>
                 <td class="hidden-xs">{{ $employee->division_name }}</td>
                 <td>
-                  <form method="POST" action="{{ route('employee.destroy', ['id' => $employee->id]) }}" onsubmit = "return confirm('Are you sure?');">
+                  <form method="POST" action="{{ route('employees.destroy', ['id' => $employee->id]) }}" onsubmit = "return confirm('Are you sure?');">
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <a href="{{ route('employee.edit', ['id' => $employee->id]) }}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Update">
+                    <a href="{{ route('employees.edit', ['id' => $employee->id]) }}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Update">
                       <i class="fa fa-pencil"></i>
                     </a>
                     <button type="submit" class="btn btn-sm btn-danger">

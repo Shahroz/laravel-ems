@@ -7,14 +7,13 @@
       <div class="panel panel-default">
         <div class="panel-heading">Add new country</div>
         <div class="panel-body">
-          <form class="form-horizontal" role="form" method="POST" action="{{ route('system.country.store') }}">
-            {{ csrf_field() }}
+            {!! Form::open(['route' => 'system.countries.store', 'id' => 'form-country', 'class' => 'form-horizontal']) !!}
 
             <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-              <label for="name" class="col-md-4 control-label">Country Name</label>
+              {!! Form::label('input-name', 'Country Name', ['class' => 'col-md-4 control-label']) !!}
 
               <div class="col-md-6">
-                <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus>
+                {!! Form::text('name', old('name'), ['class' => 'form-control', 'id' => 'input-name', 'autofocus', true, 'required' => true]) !!}
 
                 @if ($errors->has('name'))
                 <span class="help-block">
@@ -23,26 +22,24 @@
                 @endif
               </div>
             </div>
-            <div class="form-group{{ $errors->has('country_code') ? ' has-error' : '' }}">
-              <label for="country_code" class="col-md-4 control-label">Country Code</label>
+            <div class="form-group{{ $errors->has('code') ? ' has-error' : '' }}">
+              {!! Form::label('input-code', 'Country Code', ['class' => 'col-md-4 control-label']) !!}
 
               <div class="col-md-6">
-                <input id="country_code" type="text" class="form-control" name="country_code" value="{{ old('country_code') }}" required>
-                @if ($errors->has('country_code'))
+                {!! Form::text('code', old('code'), ['class' => 'form-control', 'id' => 'input-code', 'required' => true]) !!}
+                @if ($errors->has('code'))
                 <span class="help-block">
-                  <strong>{{ $errors->first('country_code') }}</strong>
+                  <strong>{{ $errors->first('code') }}</strong>
                 </span>
                 @endif
               </div>
             </div>
             <div class="form-group">
               <div class="col-md-6 col-md-offset-4">
-                <button type="submit" class="btn btn-primary">
-                  Create
-                </button>
+                {!! Form::submit('Create', ['class' => 'btn btn-primary']) !!}
               </div>
             </div>
-          </form>
+          {!! Form::close() !!}
         </div>
       </div>
     </div>

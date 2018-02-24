@@ -24,13 +24,16 @@ class StateFormRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'name'       => 'required|max:60|unique:state',
-            'country_id' => 'required|integer|exists:country,id'
+            'name'       => 'required|max:60|unique:states',
+            'country_id' => 'required|integer|exists:countries,id'
         ];
 
-        if ($this->isMethod('put')) {
-            $rules['id']   = 'required|integer|exists:state';
-            $rules['name'] .= ',' . $this->get('id', null);
+        switch ($this->method()) {
+            case 'PUT':
+            case 'PATCH':
+                $stateId        = $this->route()->parameter('state')->id;
+                $rules['name'] .= sprintf(',name,%s', $stateId); 
+                break;  
         }
 
         return $rules;

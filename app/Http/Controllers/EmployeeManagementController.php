@@ -130,13 +130,13 @@ class EmployeeManagementController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Http\Requests\EmployeeFormRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Employee  $employee
      * @return \Illuminate\Http\Response
      */
-    public function destroy(EmployeeFormRequest $request, Employee $employee)
+    public function destroy(Request $request, Employee $employee)
     {
-        $response = $this->employeeService->delete($employee, $request);
+        $response = $this->employeeService->delete($employee);
 
         return redirect()->route('employee.index')
             ->with('response', $response);
@@ -184,10 +184,10 @@ class EmployeeManagementController extends Controller
     private function getFormData()
     {
         $data = [
-            'states'      => $this->stateService->getAll(),
-            'countries'   => $this->countryService->getAll(),
-            'departments' => $this->departmetService->getAll(),
-            'divisions'   => $this->divisionService->getAll()
+            'states'      => $this->stateService->getStateList(),
+            'countries'   => $this->countryService->getCountryList(),
+            'departments' => $this->departmetService->getDepartmentList(),
+            'divisions'   => $this->divisionService->getDivisionList()
         ];
 
         return $data;

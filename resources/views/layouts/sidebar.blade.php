@@ -33,16 +33,15 @@
           </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="{{ url('system-management/department') }}">Department</a></li>
-          <li><a href="{{ url('system-management/division') }}">Division</a></li>
-          <li><a href="{{ url('system-management/country') }}">Country</a></li>
-          <li><a href="{{ url('system-management/state') }}">State</a></li>
-          <li><a href="{{ url('system-management/city') }}">City</a></li>
-          <li><a href="{{ url('system-management/report') }}">Report</a></li>
+          <li><a href="{{ route('system.departments.index') }}">Department</a></li>
+          <li><a href="{{ route('system.divisions.index') }}">Division</a></li>
+          <li><a href="{{ route('system.countries.index') }}">Country</a></li>
+          <li><a href="{{ route('system.states.index') }}">State</a></li>
+          <li><a href="{{ route('system.reports.index') }}">Report</a></li>
         </ul>
       </li>
       <li>
-        <a href="{{ route('user.index') }}">
+        <a href="{{ route('users.index') }}">
           <i class="fa fa-link"></i> 
           <span>User management</span>
         </a>

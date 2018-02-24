@@ -9,7 +9,7 @@
           <h3 class="box-title">List of divisions</h3>
         </div>
         <div class="col-xs-2">
-          <a class="btn btn-primary pull-right" href="{{ route('system.division.create') }}" title="Add new division" data-toggle="tooltip">
+          <a class="btn btn-primary pull-right" href="{{ route('system.divisions.create') }}" title="Add new division" data-toggle="tooltip">
             <i class="fa fa-plus"></i>
           </a>
         </div>
@@ -21,7 +21,7 @@
         <div class="col-sm-6"></div>
         <div class="col-sm-6"></div>
       </div>
-      <form method="POST" action="{{ route('system.division.search') }}">
+      <form method="POST" action="{{ route('system.divisions.search') }}">
        {{ csrf_field() }}
        @component('layouts.search', ['title' => 'Search'])
        @component('layouts.two-cols-search-row', [
@@ -51,10 +51,10 @@
               <tr role="row" class="odd">
                 <td>{{ $division->name }}</td>
                 <td>
-                  <form class="row" method="POST" action="{{ route('system.division.destroy', ['id' => $division->id]) }}" onsubmit = "return confirm('Are you sure?')">
+                  <form class="row" method="POST" action="{{ route('system.divisions.destroy', ['division' => $division->id]) }}" onsubmit = "return confirm('Are you sure?')">
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <a href="{{ route('system.division.edit', ['id' => $division->id]) }}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Update">
+                    <a href="{{ route('system.divisions.edit', ['division' => $division->id]) }}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Update">
                       <i class="fa fa-pencil"></i>
                     </a>
                     <button type="submit" class="btn btn-sm btn-danger">

@@ -24,13 +24,13 @@ class UserService
             $filters['first_name'] = $request->get('first_name');
             $filters['last_name']  = $request->get('last_name');            
         }
-
+        
         return $this->userRepository->getAll($filters, $limit);
     }
 
     public function create(Request $request)
     {
-        $input    = $request->except(['_token', '_method', 'id']);
+        $input    = $request->except(['_token', '_method', 'id', 'password_confirmation']);
         $response = $this->userRepository->create($input);
 
         return $response;
@@ -38,7 +38,7 @@ class UserService
 
     public function update(User $user, Request $request)
     {
-        $input = $request->except(['_token', '_method', 'id']);
+        $input = $request->except(['_token', '_method', 'id', 'password_confirmation']);
 
         return $this->userRepository->update($user, $input);
     }

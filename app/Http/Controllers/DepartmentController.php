@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Services\DepartmentService;
 use App\Http\Requests\DepartmentFormRequest;
@@ -107,7 +108,7 @@ class DepartmentController extends Controller
      * @param  \App\Models\Department  $department
      * @return \Illuminate\Http\Response
      */
-    public function destroy(DepartmentFormRequest $request, Department $department)
+    public function destroy(Request $request, Department $department)
     {
         $response = $this->departmentService->delete($department, $request);
         if (!$response['status']) {

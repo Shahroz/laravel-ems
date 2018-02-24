@@ -9,7 +9,7 @@
           <h3 class="box-title">List of countries</h3>
         </div>
         <div class="col-xs-2">
-          <a class="btn btn-primary pull-right" href="{{ route('system.country.create') }}" title="Add new country" data-toggle="tooltip">
+          <a class="btn btn-primary pull-right" href="{{ route('system.countries.create') }}" title="Add new country" data-toggle="tooltip">
             <i class="fa fa-plus"></i>
           </a>
         </div>
@@ -21,7 +21,7 @@
         <div class="col-sm-6"></div>
         <div class="col-sm-6"></div>
       </div>
-      <form method="POST" action="{{ route('system.country.search') }}">
+      <form method="POST" action="{{ route('system.countries.search') }}">
        {{ csrf_field() }}
        @component('layouts.search', ['title' => 'Search'])
        @component('layouts.two-cols-search-row', [
@@ -31,10 +31,10 @@
               'value' => isset($searchingVals) && isset($searchingVals['name']) ? 
                 $searchingVals['name'] : ''
             ],
-            'country_code' => [
+            'code' => [
               'label' => 'Country Code',
-              'value' => isset($searchingVals) && isset($searchingVals['country_code']) ? 
-                $searchingVals['country_code'] : ''
+              'value' => isset($searchingVals) && isset($searchingVals['code']) ? 
+                $searchingVals['code'] : ''
             ]          
           ]
         ])
@@ -47,21 +47,21 @@
           <table id="table-country" class="table table-bordered table-hover dataTable" role="grid" aria-describedby="table-country_info">
             <thead>
               <tr role="row">
-                <th width="20%" class="sorting" tabindex="0" aria-controls="table-country" rowspan="1" colspan="1" aria-label="country: activate to sort column ascending">Country Code</th>
                 <th width="20%" class="sorting" tabindex="0" aria-controls="table-country" rowspan="1" colspan="1" aria-label="country: activate to sort column ascending">Country Name</th>
+                <th width="20%" class="sorting" tabindex="0" aria-controls="table-country" rowspan="1" colspan="1" aria-label="country: activate to sort column ascending">Country Code</th>
                 <th tabindex="0" aria-controls="table-country" rowspan="1" colspan="2" aria-label="Action: activate to sort column ascending">Action</th>
               </tr>
             </thead>
             <tbody>
               @foreach ($countries as $country)
               <tr role="row" class="odd">
-                <td>{{ $country->country_code }}</td>
                 <td>{{ $country->name }}</td>
+                <td>{{ $country->code }}</td>
                 <td>
-                  <form class="row" method="POST" action="{{ route('system.country.destroy', ['id' => $country->id]) }}" onsubmit = "return confirm('Are you sure?')">
+                  <form class="row" method="POST" action="{{ route('system.countries.destroy', ['country' => $country->id]) }}" onsubmit = "return confirm('Are you sure?')">
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <a href="{{ route('system.country.edit', ['id' => $country->id]) }}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Update">
+                    <a href="{{ route('system.countries.edit', ['country' => $country->id]) }}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Update">
                       <i class="fa fa-pencil"></i>
                     </a>
                     <button type="submit" class="btn btn-sm btn-danger">

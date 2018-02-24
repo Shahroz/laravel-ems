@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Country;
 use Illuminate\Http\Request;
 use App\Services\CountryService;
 use App\Http\Requests\CountryFormRequest;
@@ -107,7 +108,7 @@ class CountryController extends Controller
      * @param  \App\Models\Country  $country
      * @return \Illuminate\Http\Response
      */
-    public function destroy(CountryFormRequest $request, Country $country)
+    public function destroy(Request $request, Country $country)
     {
         $response = $this->countryService->delete($country, $request);
         if (!$response['status']) {
@@ -133,7 +134,7 @@ class CountryController extends Controller
         ];
         $countries = $this->countryService->getAll($filters);
 
-        return view('system.country.index', [
+        return view('system.countries.index', [
             'countries'     => $countries,
             'searchingVals' => $filters
         ]);

@@ -5,16 +5,14 @@
   <div class="row">
     <div class="col-xs-12">
       <div class="panel panel-default">
-        <div class="panel-heading">Update department</div>
+        <div class="panel-heading">Update Department</div>
         <div class="panel-body">
-          <form class="form-horizontal" role="form" method="POST" action="{{ route('system.department.update', ['id' => $department->id]) }}">
-            <input type="hidden" name="_method" value="PATCH">
-            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+          {!! Form::model($department, ['route' => ['system.departments.update', $department->id], 'id' => 'form-department', 'class' => 'form-horizontal']) !!}
             <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
-              <label for="name" class="col-md-4 control-label">department Name</label>
+              {!! Form::label('input-name', 'Department Name', ['class' => 'col-md-4 control-label']) !!}
 
               <div class="col-md-6">
-                <input id="name" type="text" class="form-control" name="name" value="{{ $department->name }}" required autofocus>
+                {!! Form::text('name', old('name', $department->name), ['class' => 'form-control', 'id' => 'input-name', 'autofocus', true, 'required' => true]) !!}
 
                 @if ($errors->has('name'))
                 <span class="help-block">
@@ -25,12 +23,10 @@
             </div>
             <div class="form-group">
               <div class="col-md-6 col-md-offset-4">
-                <button type="submit" class="btn btn-primary">
-                  Update
-                </button>
+                {!! Form::submit('Create', ['class' => 'btn btn-primary']) !!}
               </div>
             </div>
-          </form>
+          {!! Form::close() !!}
         </div>
       </div>
     </div>

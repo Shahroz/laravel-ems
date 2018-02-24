@@ -13,7 +13,7 @@ class StateRepository extends AbstractRepository
         $this->model = $state;
     }
 
-    public function getAll($filters = [])
+    public function getAll($filters = [], $limit = 20)
     {
         $query = $this->model;
         if (!empty($filters)) {
@@ -24,7 +24,12 @@ class StateRepository extends AbstractRepository
             }
         }
 
-        return $query->paginate($limit);
+        return $query->with('country')->paginate($limit);
+    }
+
+    public function getStateList()
+    {
+        return $this->model->pluck('name', 'id');
     }
 
     public function create($data)

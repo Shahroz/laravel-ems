@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "45044e713694cca49969381afc5ffe2f",
+    "content-hash": "67ce93f2af0140bb9fe9cd8da4574641",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -527,16 +527,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v5.5.34",
+            "version": "v5.5.35",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "1de7c0aec13eadbdddc2d1ba4019b064b2c6b966"
+                "reference": "b0e15382ecf51a082ef8b2ae0d26f62972f6c3ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/1de7c0aec13eadbdddc2d1ba4019b064b2c6b966",
-                "reference": "1de7c0aec13eadbdddc2d1ba4019b064b2c6b966",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/b0e15382ecf51a082ef8b2ae0d26f62972f6c3ce",
+                "reference": "b0e15382ecf51a082ef8b2ae0d26f62972f6c3ce",
                 "shasum": ""
             },
             "require": {
@@ -593,7 +593,7 @@
                 "illuminate/translation": "self.version",
                 "illuminate/validation": "self.version",
                 "illuminate/view": "self.version",
-                "tightenco/collect": "self.version"
+                "tightenco/collect": "<5.5.33"
             },
             "require-dev": {
                 "aws/aws-sdk-php": "~3.0",
@@ -657,7 +657,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2018-02-06T15:36:55+00:00"
+            "time": "2018-02-22T19:56:29+00:00"
         },
         {
             "name": "laravel/tinker",

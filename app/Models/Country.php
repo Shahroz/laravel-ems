@@ -11,10 +11,10 @@ class Country extends Model
      *
      * @var string
      */
-    protected $table = 'country';
+    protected $table = 'countries';
 
     protected $fillable = [
-        'name', 'country_code'
+        'name', 'code'
     ];
 
     /**
@@ -26,8 +26,8 @@ class Country extends Model
         'id'
     ];
 
-    public function cities()
+    public function states()
     {
-        return $this->hasMany(City::class);
+        return $this->hasMany(State::class);
     }
 }

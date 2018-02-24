@@ -9,7 +9,7 @@
           <h3 class="box-title">List of hired employees</h3>
         </div>
         <div class="col-xs-2">
-            <form class="form-horizontal" role="form" method="POST" action="{{ route('system.report.excel') }}">
+            <form class="form-horizontal" role="form" method="POST" action="{{ route('system.reports.excel') }}">
                 {{ csrf_field() }}
                 <input type="hidden" value="{{$searchingVals['from']}}" name="from" />
                 <input type="hidden" value="{{$searchingVals['to']}}" name="to" />
@@ -19,7 +19,7 @@
             </form>
         </div>
         <div class="col-xs-2">
-            <form class="form-horizontal" role="form" method="POST" action="{{ route('system.report.pdf') }}">
+            <form class="form-horizontal" role="form" method="POST" action="{{ route('system.reports.pdf') }}">
                 {{ csrf_field() }}
                 <input type="hidden" value="{{$searchingVals['from']}}" name="from" />
                 <input type="hidden" value="{{$searchingVals['to']}}" name="to" />
@@ -36,7 +36,7 @@
         <div class="col-sm-6"></div>
         <div class="col-sm-6"></div>
       </div>
-      <form method="POST" action="{{ route('system.report.search') }}">
+      <form method="POST" action="{{ route('system.reports.search') }}">
          {{ csrf_field() }}
          @component('layouts.search', ['title' => 'Search'])
           @component('layouts.two-cols-date-search-row', [

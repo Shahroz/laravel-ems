@@ -13,11 +13,11 @@ class CreateDivisionTable extends Migration
      */
     public function up()
     {
-        Schema::create('division', function (Blueprint $table) {
+        Schema::create('divisions', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name', 60);
+            $table->string('name', 60)->index()->unique();
+            $table->boolean('status')->default(true);
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -28,6 +28,6 @@ class CreateDivisionTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('division');
+        Schema::dropIfExists('divisions');
     }
 }

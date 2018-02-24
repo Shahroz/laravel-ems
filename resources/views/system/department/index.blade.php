@@ -9,7 +9,7 @@
           <h3 class="box-title">List of departments</h3>
         </div>
         <div class="col-xs-2">
-          <a class="btn btn-primary pull-right" href="{{ route('system.department.create') }}" title="Add new department" data-toggle="tooltip">
+          <a class="btn btn-primary pull-right" href="{{ route('system.departments.create') }}" title="Add new department" data-toggle="tooltip">
             <i class="fa fa-plus"></i>
           </a>
         </div>
@@ -21,7 +21,7 @@
         <div class="col-sm-6"></div>
         <div class="col-sm-6"></div>
       </div>
-      <form method="POST" action="{{ route('system.department.search') }}">
+      <form method="POST" action="{{ route('system.departments.search') }}">
        {{ csrf_field() }}
        @component('layouts.search', ['title' => 'Search'])
        @component('layouts.two-cols-search-row', [
@@ -51,10 +51,10 @@
               <tr role="row" class="odd">
                 <td>{{ $department->name }}</td>
                 <td>
-                  <form method="POST" action="{{ route('system.department.destroy', ['id' => $department->id]) }}" onsubmit = "return confirm('Are you sure?')">
+                  <form method="POST" action="{{ route('system.departments.destroy', ['department' => $department->id]) }}" onsubmit = "return confirm('Are you sure?')">
                     <input type="hidden" name="_method" value="DELETE">
                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                    <a href="{{ route('system.department.edit', ['id' => $department->id]) }}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Update">
+                    <a href="{{ route('system.departments.edit', ['department' => $department->id]) }}" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Update">
                       <i class="fa fa-pencil"></i>
                     </a>
                     <button type="submit" class="btn btn-sm btn-danger">
