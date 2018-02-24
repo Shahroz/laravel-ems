@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Country;
 use Illuminate\Http\Request;
 use App\Repositories\CountryRepository;
 
@@ -22,6 +23,11 @@ class CountryService
     public function getAll($filters = [])
     {
         return $this->countryRepository->getAll($filters);
+    }
+
+    public function getCountryList()
+    {
+        return $this->countryRepository->getCountryList();
     }
 
     public function create(Request $request)

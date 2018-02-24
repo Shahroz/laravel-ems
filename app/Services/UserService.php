@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Repositories\UserRepository;
 
@@ -35,7 +36,7 @@ class UserService
         return $response;
     }
 
-    public function update(Request $request, User $user)
+    public function update(User $user, Request $request)
     {
         $input = $request->except(['_token', '_method', 'id']);
 

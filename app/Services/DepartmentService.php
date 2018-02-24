@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Repositories\DepartmentRepository;
 

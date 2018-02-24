@@ -1,32 +1,50 @@
 <?php
 namespace App\Services;
 
-use Illuminate\Support\Facades\Auth;
+use App\Models\State;
+use Illuminate\Http\Request;
+use App\Repositories\StateRepository;
 
 class StateService
 {
-    public function __construct()
-    {
+    protected $stateRepository;
 
+    /**
+     * Create a new service instance.
+     *
+     * @return void
+     */
+    public function __construct(CountryRepository $stateRepository)
+    {
+        $this->stateRepository = $stateRepository;
     }
 
-    public function getAll()
+    public function getAll($filters = [])
     {
-
+        return $this->stateRepository->getAll($filters);
     }
 
-    public function create()
+    public function getCountryList()
     {
-
+        return $this->stateRepository->getCountryList();
     }
 
-    public function update()
+    public function create(Request $request)
     {
+        $input = $request->except(['_token', '_method', 'id']);
 
+        return $this->stateRepository->create($input);
     }
 
-    public function delete()
+    public function update(State $state, Request $request)
     {
+        $input = $request->except(['_token', '_method', 'id']);
 
+        return $this->stateRepository->update($state, $input);
+    }
+
+    public function delete(State $state, Request $request)
+    {
+        return $this->stateRepository->delete($state);
     }
 }
